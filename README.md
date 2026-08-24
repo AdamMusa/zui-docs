@@ -15,7 +15,7 @@ bin/rails db:seed
 bin/dev
 ```
 
-Open `http://localhost:3000`. In development, `/studio` exposes the Lexxy guide editor. Production
+Open `http://localhost:3050`. In development, `/studio` exposes the Lexxy guide editor. Production
 keeps the studio disabled unless `ZUI_DOCS_STUDIO=1` is set.
 
 ## Catalog source

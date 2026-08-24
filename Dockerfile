@@ -3,7 +3,7 @@
 
 # This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
 # docker build -t zui_docs .
-# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name zui_docs zui_docs
+# docker run -d -p 3050:3050 -e RAILS_MASTER_KEY=<value from config/master.key> --name zui_docs zui_docs
 
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 
@@ -25,6 +25,8 @@ ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development" \
+    HTTP_PORT="3050" \
+    TARGET_PORT="3051" \
     LD_PRELOAD="/usr/local/lib/libjemalloc.so"
 
 # Throw-away build stage to reduce size of final image
@@ -73,5 +75,5 @@ COPY --chown=rails:rails --from=build /rails /rails
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start server via Thruster by default, this can be overwritten at runtime
-EXPOSE 80
+EXPOSE 3050
 CMD ["./bin/thrust", "./bin/rails", "server"]
