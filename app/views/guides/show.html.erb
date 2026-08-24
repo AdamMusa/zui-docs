@@ -1,0 +1,21 @@
+<% page_title @guide.title %>
+
+<article class="guide-page section-pad">
+  <nav class="breadcrumbs" aria-label="Breadcrumb"><%= link_to "Guides", root_path(anchor: "guides") %><span>/</span><strong><%= @guide.title %></strong></nav>
+  <header class="guide-header" data-controller="reveal">
+    <span class="eyebrow">Zui guide · <%= format("%02d", @guide.position) %></span>
+    <h1><%= @guide.title %></h1>
+    <p><%= @guide.summary %></p>
+    <div><span>Updated for Zui <%= ZuiCatalog.metadata.fetch("zui_version") %></span><span>·</span><span><%= pluralize((@guide.body.to_plain_text.split.length / 220.0).ceil, "minute") %> read</span></div>
+  </header>
+
+  <div class="guide-layout">
+    <div class="guide-content" data-controller="syntax-highlight"><%= @guide.body %></div>
+    <aside class="guide-aside">
+      <div><span class="eyebrow">In this guide</span><p>Headings are navigable from the document and searchable with <kbd>⌘ K</kbd>.</p></div>
+      <% if Rails.env.development? || ENV["ZUI_DOCS_STUDIO"] == "1" %>
+        <%= link_to "Edit in Lexxy studio →", edit_studio_guide_path(@guide), class: "text-link" %>
+      <% end %>
+    </aside>
+  </div>
+</article>

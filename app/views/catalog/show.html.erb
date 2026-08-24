@@ -1,0 +1,74 @@
+<% page_title @component.fetch("title") %>
+
+<article class="component-page section-pad" data-controller="syntax-highlight">
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <%= link_to "Components", components_path %><span>/</span>
+    <%= link_to @component.fetch("category"), components_path(category: @component.fetch("category_slug")) %><span>/</span>
+    <strong><%= @component.fetch("title") %></strong>
+  </nav>
+
+  <header class="component-header component-header--simple" data-controller="reveal">
+    <div>
+      <div class="component-header__badges">
+        <span><%= @component.fetch("category") %></span>
+        <% if @component.fetch("container") %><span>Container</span><% end %>
+        <span>Native Qt</span>
+      </div>
+      <h1><%= @component.fetch("title") %></h1>
+      <p><%= @component.fetch("description") %></p>
+    </div>
+  </header>
+
+  <div class="component-docs-grid">
+    <div class="component-docs-main">
+      <section class="doc-section" id="usage">
+        <div class="doc-section__heading"><span class="eyebrow">Usage</span><h2>Ruby example</h2><p>Paste this complete Builder example inside the <code>app</code> surface from the Quickstart. Replace illustrative asset paths with files from your project.</p></div>
+        <div class="code-panel" data-controller="copy" data-copy-value-value="<%= @component.fetch("example") %>">
+          <div class="code-panel__bar"><span><i></i> Ruby</span><button type="button" data-copy-target="button" data-action="copy#copy">Copy code</button></div>
+          <pre data-language="ruby"><code class="language-ruby"><%= @component.fetch("example") %></code></pre>
+        </div>
+      </section>
+
+      <section class="doc-section" id="properties">
+        <div class="doc-section__heading"><span class="eyebrow">API</span><h2>Component properties</h2><p><%= @component.fetch("specific_properties").length %> component-specific values, plus shared item and layout properties.</p></div>
+        <div class="api-table">
+          <% @component.fetch("specific_properties").each do |property| %>
+            <div class="api-row"><code><%= property %></code><span><%= property.tr("_", " ").capitalize %> configuration for <%= @component.fetch("title") %>.</span><small>property</small></div>
+          <% end %>
+          <% if @component.fetch("specific_properties").empty? %>
+            <div class="api-row api-row--empty"><span>This component is controlled through shared item properties and its lifecycle.</span></div>
+          <% end %>
+        </div>
+        <details class="inherited-api">
+          <summary>Show <%= (@component.fetch("properties") - @component.fetch("specific_properties")).length %> shared item properties</summary>
+          <div class="token-cloud">
+            <% (@component.fetch("properties") - @component.fetch("specific_properties")).each do |property| %><code><%= property %></code><% end %>
+          </div>
+        </details>
+      </section>
+
+      <section class="doc-section" id="events">
+        <div class="doc-section__heading"><span class="eyebrow">Interaction</span><h2>Events</h2><p>Subscribe with <code>on widget, :event</code> and keep behavior in Ruby.</p></div>
+        <% if @component.fetch("events").any? %>
+          <div class="event-grid">
+            <% @component.fetch("events").each do |event| %><div><span>↗</span><code><%= event %></code><small>Native event payload</small></div><% end %>
+          </div>
+        <% else %>
+          <div class="quiet-callout">This renderer is display-only and does not emit component-specific events.</div>
+        <% end %>
+      </section>
+
+    </div>
+
+    <aside class="on-this-page">
+      <span class="eyebrow">On this page</span>
+      <a href="#usage">Usage</a><a href="#properties">Properties</a><a href="#events">Events</a>
+      <div><small>Adapter</small><code><%= @component.fetch("qml") %></code><small>Auto-binding</small><strong><%= @component.fetch("auto_bind") ? "Enabled" : "Manual" %></strong></div>
+    </aside>
+  </div>
+
+  <nav class="component-pagination" aria-label="Adjacent components">
+    <% if @previous_component %><%= link_to component_path(@previous_component.fetch("slug")) do %><small>← Previous</small><strong><%= @previous_component.fetch("title") %></strong><% end %><% else %><span></span><% end %>
+    <% if @next_component %><%= link_to component_path(@next_component.fetch("slug")), class: "component-pagination__next" do %><small>Next →</small><strong><%= @next_component.fetch("title") %></strong><% end %><% end %>
+  </nav>
+</article>

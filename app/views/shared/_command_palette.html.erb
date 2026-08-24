@@ -1,0 +1,20 @@
+<dialog class="command-palette" data-command-palette-target="dialog" data-action="click->command-palette#backdropClose">
+  <div class="command-palette__surface">
+    <div class="command-palette__search">
+      <span aria-hidden="true">⌕</span>
+      <input type="search"
+             autocomplete="off"
+             placeholder="Search 241 components and guides…"
+             aria-label="Search documentation"
+             data-command-palette-target="input"
+             data-action="input->command-palette#search keydown->command-palette#navigate">
+      <kbd>esc</kbd>
+    </div>
+    <div class="command-palette__results" data-command-palette-target="results" role="listbox"></div>
+    <div class="command-palette__footer">
+      <span><kbd>↑</kbd><kbd>↓</kbd> move</span>
+      <span><kbd>↵</kbd> open</span>
+      <span class="command-palette__hint">Search properties too: try “hover”, “source”, or “color”.</span>
+    </div>
+  </div>
+</dialog>

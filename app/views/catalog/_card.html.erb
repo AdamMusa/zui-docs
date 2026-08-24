@@ -1,0 +1,22 @@
+<%= link_to component_path(component.fetch("slug")),
+            class: "component-card",
+            data: {
+              catalog_target: "item",
+              catalog_category: component.fetch("category_slug"),
+              catalog_search: component.fetch("search_text")
+            } do %>
+  <div class="component-card__visual component-card__visual--<%= component_visual_type(component) %>">
+    <span class="component-card__icon" aria-hidden="true"><%= component_icon(component) %></span>
+    <span class="component-card__adapter"><%= component.fetch("qml") %></span>
+    <i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i>
+  </div>
+  <div class="component-card__body">
+    <div class="component-card__heading"><h3><%= component.fetch("title") %></h3><span>↗</span></div>
+    <p><%= component.fetch("description") %></p>
+    <div class="component-card__meta">
+      <span><%= component.fetch("specific_properties").length %> props</span>
+      <span><%= component.fetch("events").length %> events</span>
+      <% if component.fetch("container") %><span>container</span><% end %>
+    </div>
+  </div>
+<% end %>

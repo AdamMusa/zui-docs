@@ -1,0 +1,10 @@
+<% page_title "Documentation studio" %>
+
+<section class="studio-page section-pad">
+  <header class="studio-header"><div><span class="eyebrow">Local authoring</span><h1>Documentation <em>studio.</em></h1><p>Edit guides with Basecamp Lexxy. Markdown shortcuts and pasted Markdown are converted directly into Action Text content—no secondary Markdown gem is installed.</p></div><span class="studio-badge">Lexxy 0.9</span></header>
+  <div class="studio-list">
+    <% @guides.each do |guide| %>
+      <%= link_to edit_studio_guide_path(guide), class: "studio-row" do %><span><small><%= format("%02d", guide.position) %></small><strong><%= guide.title %></strong><p><%= guide.summary %></p></span><span>Edit →</span><% end %>
+    <% end %>
+  </div>
+</section>

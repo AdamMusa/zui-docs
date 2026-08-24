@@ -1,0 +1,23 @@
+<header class="topbar">
+  <div class="topbar__brand">
+    <button class="icon-button mobile-only" type="button" aria-label="Open navigation" data-action="sidebar#open">☰</button>
+    <%= link_to root_path, class: "brand", aria: { label: "Zui documentation home" } do %>
+      <span class="brand__mark" aria-hidden="true">Z</span>
+      <span class="brand__word">zui</span>
+      <span class="brand__label">docs</span>
+    <% end %>
+    <span class="version-pill">v<%= ZuiCatalog.metadata.fetch("zui_version") %></span>
+  </div>
+
+  <div class="topbar__actions">
+    <button class="search-trigger" type="button" data-action="command-palette#open">
+      <span aria-hidden="true">⌕</span>
+      <span>Search documentation</span>
+      <kbd>⌘ K</kbd>
+    </button>
+    <%= link_to "GitHub ↗", "https://github.com/AdamMusa/zui", class: "topbar-link", target: "_blank", rel: "noreferrer" %>
+    <button class="icon-button" type="button" aria-label="Switch color theme" data-action="theme#toggle">
+      <span data-theme-target="icon">◐</span>
+    </button>
+  </div>
+</header>

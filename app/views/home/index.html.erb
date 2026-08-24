@@ -1,0 +1,114 @@
+<% page_title "Native desktop UI in pure Ruby" %>
+
+<section class="hero section-pad">
+  <div class="hero__copy" data-controller="reveal">
+    <div class="hero__eyebrow"><span></span> Ruby owns the whole experience</div>
+    <h1>Native UI.<br><em>Ruby all the way down.</em></h1>
+    <p class="hero__lede">Build expressive desktop applications with state, events, animation, media, GPU effects, and 3D—without learning a second application language.</p>
+    <div class="hero__actions">
+      <%= link_to "Explore the catalog", components_path, class: "button button--primary" %>
+      <% if @guides.first %><%= link_to "Read the quickstart", guide_path(@guides.first), class: "button button--ghost" %><% end %>
+    </div>
+    <div class="install-command" data-controller="copy" data-copy-value-value="gem install zui">
+      <span class="install-command__prompt">$</span><code>gem install zui</code>
+      <button type="button" data-action="copy#copy" data-copy-target="button" aria-label="Copy install command">Copy</button>
+    </div>
+  </div>
+
+  <div class="hero__demo" data-controller="reveal">
+    <div class="window-chrome">
+      <div class="window-chrome__bar">
+        <div class="window-dots"><i></i><i></i><i></i></div>
+        <span>telemetry_console.rb</span>
+        <span class="window-chrome__live"><i></i> Native</span>
+      </div>
+      <div class="demo-app">
+        <aside class="demo-app__rail">
+          <span class="demo-logo">Z</span><span class="is-active">⌁</span><span>◫</span><span>◇</span><span class="demo-app__rail-bottom">⚙</span>
+        </aside>
+        <div class="demo-app__content">
+          <header><div><small>SYSTEM OVERVIEW</small><strong>Good evening, Ruby.</strong></div><span class="demo-live">● LIVE</span></header>
+          <div class="demo-metrics">
+            <div><small>RENDER FPS</small><strong>60</strong><span>steady</span></div>
+            <div><small>COMPONENTS</small><strong>241</strong><span>native</span></div>
+            <div><small>FRAME TIME</small><strong>7.2</strong><span>ms</span></div>
+          </div>
+          <div class="demo-chart" aria-hidden="true">
+            <% [34, 48, 42, 68, 55, 81, 73, 92, 78, 96, 84, 100].each do |height| %><i style="--height: <%= height %>%"></i><% end %>
+          </div>
+          <div class="demo-actions"><span>Runtime connected</span><span>Catalog validated</span></div>
+        </div>
+      </div>
+    </div>
+    <span class="hero-orbit hero-orbit--one">STATE</span>
+    <span class="hero-orbit hero-orbit--two">GPU</span>
+  </div>
+</section>
+
+<section class="metrics-strip" aria-label="Catalog statistics">
+  <div><strong><%= ZuiCatalog.metadata.fetch("component_count") %></strong><span>native components</span></div>
+  <div><strong><%= ZuiCatalog.metadata.fetch("category_count") %></strong><span>catalog families</span></div>
+  <div><strong><%= number_with_delimiter ZuiCatalog.metadata.fetch("property_count") %></strong><span>property bindings</span></div>
+  <div><strong><%= number_with_delimiter ZuiCatalog.metadata.fetch("event_count") %></strong><span>native events</span></div>
+</section>
+
+<section class="feature-section section-pad" data-controller="reveal syntax-highlight">
+  <div class="section-heading">
+    <div><span class="eyebrow">One coherent system</span><h2>One Ruby API for complete desktop applications.</h2></div>
+    <p>Zui keeps Ruby in control while Qt handles the native scene graph, input, media, and rendering pipeline.</p>
+  </div>
+
+  <div class="bento-grid">
+    <article class="bento bento--large bento--state">
+      <div class="bento__index">01</div>
+      <div><span class="eyebrow">Reactive state</span><h3>Change Ruby.<br>Watch native UI respond.</h3><p>Transactional state, computed bindings, and surgical protocol patches keep application logic direct.</p></div>
+      <div class="state-visual" aria-hidden="true"><span>state.count</span><i>→</i><span class="state-value">42</span><i>→</i><span>Text</span></div>
+    </article>
+    <article class="bento bento--native">
+      <div class="bento__index">02</div><span class="eyebrow">Actually native</span><h3>Qt controls.<br>No browser engine.</h3>
+      <div class="native-rings" aria-hidden="true"><i></i><i></i><i></i><b>Qt</b></div>
+    </article>
+    <article class="bento bento--catalog">
+      <div class="bento__index">03</div><span class="eyebrow">Complete catalog</span><h3>Every registered primitive.</h3>
+      <div class="catalog-cloud" aria-hidden="true"><span>charts</span><span>3D</span><span>media</span><span>inputs</span><span>effects</span><span>models</span></div>
+    </article>
+    <article class="bento bento--wide bento--code">
+      <div class="bento__index">04</div>
+      <div><span class="eyebrow">A Ruby-shaped API</span><h3>The interface reads like the product.</h3><p>Compose components, bind values, and handle events with ordinary blocks and objects.</p></div>
+      <pre data-language="ruby"><code class="language-ruby">card padding: 24 do
+  label "Build status"
+  text { state.status }
+  button "Deploy" do
+    state.status = "Live"
+  end
+end</code></pre>
+    </article>
+  </div>
+</section>
+
+<section class="component-spotlight section-pad" data-controller="reveal">
+  <div class="section-heading section-heading--inline">
+    <div><span class="eyebrow">Component reference</span><h2>Start with the catalog.</h2></div>
+    <%= link_to "View all 241 components →", components_path, class: "text-link" %>
+  </div>
+  <div class="component-grid component-grid--featured"><%= render partial: "catalog/card", collection: @featured_components, as: :component %></div>
+</section>
+
+<section class="guides-band section-pad" id="guides" data-controller="reveal">
+  <div class="guides-band__intro"><span class="eyebrow">Guides</span><h2>Build your first native surface.</h2><p>Follow the path from a blank Ruby file to state, events, layouts, animation, and effects.</p></div>
+  <div class="guide-list">
+    <% @guides.each_with_index do |guide, index| %>
+      <%= link_to guide_path(guide), class: "guide-row" do %>
+        <span class="guide-row__index"><%= format("%02d", index + 1) %></span>
+        <span><strong><%= guide.title %></strong><small><%= guide.summary %></small></span>
+        <span class="guide-row__arrow">↗</span>
+      <% end %>
+    <% end %>
+  </div>
+</section>
+
+<section class="final-cta section-pad" data-controller="reveal">
+  <span class="eyebrow">Reference every component</span>
+  <h2>Your next desktop app<br>can be <em>all Ruby.</em></h2>
+  <div><%= link_to "Browse all components", components_path, class: "button button--primary" %><%= link_to "View source ↗", "https://github.com/AdamMusa/zui", class: "button button--ghost", target: "_blank", rel: "noreferrer" %></div>
+</section>

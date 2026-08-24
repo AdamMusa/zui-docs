@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <title><%= content_for(:title) || "Zui — Native desktop UI in pure Ruby" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="description" content="The complete documentation and component catalog for Zui, the native desktop UI framework for Ruby.">
+    <meta name="theme-color" content="#09090b">
+    <meta name="application-name" content="Zui Docs">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= yield :head %>
+
+    <%= stylesheet_link_tag "lexxy", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body data-controller="theme command-palette sidebar"
+        data-command-palette-url-value="<%= search_path(format: :json) %>">
+    <div class="ambient-grid" aria-hidden="true"></div>
+    <%= render "shared/header" %>
+
+    <div class="docs-frame">
+      <%= render "shared/sidebar" %>
+      <main id="main-content" class="docs-main">
+        <% if notice.present? %>
+          <div class="flash" role="status"><%= notice %></div>
+        <% end %>
+        <%= yield %>
+        <%= render "shared/footer" %>
+      </main>
+    </div>
+
+    <%= render "shared/command_palette" %>
+  </body>
+</html>

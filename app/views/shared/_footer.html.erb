@@ -1,0 +1,13 @@
+<footer class="site-footer">
+  <div>
+    <span class="brand__mark brand__mark--small" aria-hidden="true">Z</span>
+    <strong>Built for native Ruby interfaces.</strong>
+  </div>
+  <div class="site-footer__links">
+    <%= link_to "Components", components_path %>
+    <%= link_to "Source", "https://github.com/AdamMusa/zui", target: "_blank", rel: "noreferrer" %>
+    <% if Rails.env.development? || ENV["ZUI_DOCS_STUDIO"] == "1" %>
+      <%= link_to "Docs studio", studio_root_path %>
+    <% end %>
+  </div>
+</footer>

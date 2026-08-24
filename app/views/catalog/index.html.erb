@@ -1,0 +1,42 @@
+<% page_title "Component catalog" %>
+
+<section class="catalog-page section-pad" data-controller="catalog reveal"
+         data-catalog-initial-category-value="<%= params[:category] %>">
+  <header class="catalog-hero">
+    <div>
+      <span class="eyebrow">Complete source registry</span>
+      <h1>Component <em>catalog.</em></h1>
+      <p>Every component shipped by Zui <%= ZuiCatalog.metadata.fetch("zui_version") %>, searchable by name, property, event, or capability.</p>
+    </div>
+    <div class="catalog-total"><strong data-catalog-target="count"><%= @components.length %></strong><span>showing</span></div>
+  </header>
+
+  <div class="catalog-tools">
+    <label class="catalog-search">
+      <span aria-hidden="true">⌕</span>
+      <input type="search" placeholder="Search components, properties, or events…" autocomplete="off"
+             data-catalog-target="query" data-action="input->catalog#filter">
+      <kbd>/</kbd>
+    </label>
+    <button type="button" class="button button--ghost button--compact" data-action="catalog#clear">Clear</button>
+  </div>
+
+  <div class="category-chips" role="group" aria-label="Filter by category">
+    <button type="button" class="category-chip is-active" data-category="all" data-catalog-target="category" data-action="catalog#selectCategory">All <span><%= @components.length %></span></button>
+    <% @categories.each do |category| %>
+      <button type="button" class="category-chip" data-category="<%= category.fetch("slug") %>" data-catalog-target="category" data-action="catalog#selectCategory">
+        <%= category.fetch("name") %> <span><%= category.fetch("count") %></span>
+      </button>
+    <% end %>
+  </div>
+
+  <div class="catalog-context"><span data-catalog-target="label">All components</span><i></i><span>Source <code><%= ZuiCatalog.metadata.fetch("source_revision")[0, 7] %></code></span></div>
+
+  <div class="component-grid" data-catalog-target="grid">
+    <%= render partial: "card", collection: @components, as: :component %>
+  </div>
+
+  <div class="catalog-empty" data-catalog-target="empty" hidden>
+    <span>⌕</span><h2>No components found.</h2><p>Try a property such as <code>color</code>, an event such as <code>hover</code>, or clear the active category.</p>
+  </div>
+</section>

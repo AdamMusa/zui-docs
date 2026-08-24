@@ -1,0 +1,44 @@
+<aside class="sidebar" data-sidebar-target="panel">
+  <div class="sidebar__mobile-header mobile-only">
+    <span class="eyebrow">Navigation</span>
+    <button class="icon-button" type="button" aria-label="Close navigation" data-action="sidebar#close">×</button>
+  </div>
+
+  <nav class="sidebar__nav" aria-label="Documentation">
+    <div class="sidebar__section">
+      <p class="sidebar__heading">Start here</p>
+      <%= link_to root_path, class: ["sidebar__link", { "is-active": active_nav?(root_path) }] do %>
+        <span>Overview</span><span class="sidebar__glyph">⌂</span>
+      <% end %>
+      <%= link_to components_path, class: ["sidebar__link", { "is-active": active_nav?(components_path) }] do %>
+        <span>All components</span><span class="sidebar__count"><%= ZuiCatalog.metadata.fetch("component_count") %></span>
+      <% end %>
+    </div>
+
+    <% if @navigation_guides.any? %>
+      <div class="sidebar__section">
+        <p class="sidebar__heading">Guides</p>
+        <% @navigation_guides.each do |guide| %>
+          <%= link_to guide.title, guide_path(guide), class: ["sidebar__link", { "is-active": request.path == guide_path(guide) }] %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="sidebar__section">
+      <p class="sidebar__heading">Catalog</p>
+      <% @catalog_categories.each do |category| %>
+        <%= link_to components_path(category: category.fetch("slug")), class: "sidebar__link sidebar__link--category" do %>
+          <span><%= category.fetch("name") %></span>
+          <span class="sidebar__count"><%= category.fetch("count") %></span>
+        <% end %>
+      <% end %>
+    </div>
+  </nav>
+
+  <div class="sidebar__footer">
+    <span class="status-dot" aria-hidden="true"></span>
+    <span>Catalog synced</span>
+    <code><%= ZuiCatalog.metadata.fetch("source_revision")[0, 7] %></code>
+  </div>
+</aside>
+<button class="sidebar-backdrop" type="button" aria-label="Close navigation" data-sidebar-target="backdrop" data-action="sidebar#close"></button>

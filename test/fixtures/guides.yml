@@ -1,0 +1,11 @@
+quickstart:
+  title: Quickstart
+  slug: quickstart
+  summary: Build a first native Zui application.
+  position: 1
+
+state:
+  title: State and bindings
+  slug: state-and-bindings
+  summary: Connect Ruby state to native properties.
+  position: 2
