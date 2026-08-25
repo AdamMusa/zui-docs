@@ -1,7 +1,6 @@
 # Zui Docs
 
-Official documentation and source-synchronized component catalog for
-[Zui](https://github.com/AdamMusa/zui), the native desktop UI framework for Ruby.
+Official documentation for [Zui](https://github.com/AdamMusa/zui).
 
 Production: [zui.alkimist.dev](https://zui.alkimist.dev)
 
