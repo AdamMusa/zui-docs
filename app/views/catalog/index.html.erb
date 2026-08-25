@@ -1,8 +1,8 @@
 <% page_title "Component catalog" %>
 
-<section class="catalog-page section-pad" data-controller="catalog reveal"
+<section class="catalog-page section-pad" data-controller="catalog"
          data-catalog-initial-category-value="<%= params[:category] %>">
-  <header class="catalog-hero">
+  <header class="catalog-hero" data-controller="reveal">
     <div>
       <span class="eyebrow">Complete source registry</span>
       <h1>Component <em>catalog.</em></h1>
