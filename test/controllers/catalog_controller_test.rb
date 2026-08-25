@@ -8,6 +8,9 @@ class CatalogControllerTest < ActionDispatch::IntegrationTest
     assert_select ".component-grid[data-catalog-target='grid'] > .component-card", 241
     assert_select ".component-card__visual", 241
     assert_select "[data-catalog-target='category']", 13
+    assert_select ".catalog-page[data-controller='catalog']", 1
+    assert_select ".catalog-page[data-controller~='reveal']", 0
+    assert_select ".catalog-hero[data-controller~='reveal']", 1
     assert_select "h1", text: /Component/
   end
 
