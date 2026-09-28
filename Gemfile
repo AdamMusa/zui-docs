@@ -16,7 +16,7 @@ gem "turbo-rails"
 gem "stimulus-rails"
 # Markdown-friendly Action Text editor from Basecamp. Do not add a second
 # Markdown renderer: Lexxy owns the authoring path for this documentation app.
-gem "lexxy", "~> 0.9.31"
+gem "lexxy", "~> 0.9.33"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
