@@ -437,7 +437,11 @@ end',
 end',
       "selection_rectangle" => 'table = table_view [{ name: "Ada" }, { name: "Grace" }], columns: [{ key: :name, label: "Name" }], selection_mode: :extended\nselection_rectangle table, mode: :drag',
       "scroll_bar" => 'list = list_view (1..50).map { |index| { label: "Item \#{index}" } }, height: 280\nscroll_bar list, orientation: :vertical, policy: :always_on',
-      "scroll_indicator" => 'list = list_view (1..50).map { |index| { label: "Item \#{index}" } }, height: 280\nscroll_indicator list, orientation: :vertical'
+      "scroll_indicator" => 'list = list_view (1..50).map { |index| { label: "Item \#{index}" } }, height: 280\nscroll_indicator list, orientation: :vertical',
+      "shape_path" => 'shape_path "M 20 140 C 90 20, 210 20, 280 140 Z", width: 300, height: 160, stroke: "#b7ff5a", stroke_width: 4, gradient: :linear, colors: %w[#b7ff5a #66e3ff], spread: :pad, end_x: 300, miter_limit: 4',
+      "grid_mesh" => 'grid_mesh 32, 32, id: :ripple_mesh\nshader_effect "assets/shaders/ripple.frag.qsb", width: 480, height: 320, mesh_source: :ripple_mesh, running: true',
+      "border_image_mesh" => 'border_image_mesh id: :frame_mesh, source_width: 64, source_height: 64, border_left: 12, border_right: 12, border_top: 12, border_bottom: 12, horizontal_tile_mode: :repeat, vertical_tile_mode: :round\nshader_effect "assets/shaders/frame.frag.qsb", width: 420, height: 260, mesh_source: :frame_mesh',
+      "wavefront_mesh" => 'wavefront_mesh "assets/meshes/panel.obj", id: :panel_mesh, projection_plane_v: [1, 0, 0], projection_plane_w: [0, 1, 0]\nshader_effect "assets/shaders/warp.frag.qsb", width: 480, height: 320, mesh_source: :panel_mesh, running: true'
     }
     normalize(examples.fetch(slug))
   end
@@ -500,7 +504,29 @@ end',
       "blur" => 'blur width: 420, height: 260, amount: 0.55, maximum: 48 do\n  image "assets/background.jpg", width: 420, height: 260\nend',
       "drop_shadow" => 'drop_shadow width: 360, height: 200, blur: 0.7, horizontal_offset: 0, vertical_offset: 12, color: "#00000099" do\n  card { label "Shadow source" }\nend',
       "colorize" => 'colorize width: 320, height: 220, amount: 0.8, color: "#b7ff5a", saturation: 0.9 do\n  image "assets/icon.png", width: 220, height: 220\nend',
-      "glow" => 'glow width: 320, height: 180, blur: 0.65, color: "#b7ff5a", opacity: 0.85 do\n  label "Signal locked", size: 34, bold: true\nend'
+      "glow" => 'glow width: 320, height: 180, blur: 0.65, color: "#b7ff5a", opacity: 0.85 do\n  label "Signal locked", size: 34, bold: true\nend',
+      "fast_blur" => 'fast_blur width: 420, height: 260, radius: 32, transparent_border: true do\n  image "assets/background.jpg", width: 420, height: 260\nend',
+      "gaussian_blur" => 'gaussian_blur width: 420, height: 260, samples: 25, radius: 12, deviation: 3.9 do\n  image "assets/background.jpg", width: 420, height: 260\nend',
+      "directional_blur" => 'directional_blur width: 420, height: 260, angle: 15, length: 48, samples: 32 do\n  image "assets/skyline.jpg", width: 420, height: 260\nend',
+      "radial_blur" => 'radial_blur width: 360, height: 360, angle: 24, samples: 32, horizontal_offset: 0, vertical_offset: 0 do\n  image "assets/turbine.png", width: 360, height: 360\nend',
+      "zoom_blur" => 'zoom_blur width: 420, height: 260, length: 40, samples: 32 do\n  image "assets/tunnel.jpg", width: 420, height: 260\nend',
+      "recursive_blur" => 'frosted = recursive_blur width: 420, height: 260, radius: 6, loops: 24 do\n  image "assets/background.jpg", width: 420, height: 260\nend\non(frosted, :progress) { |event| puts "Blur progress: #{event.fetch("value")}" }',
+      "brightness_contrast" => 'brightness_contrast width: 420, height: 260, brightness: 0.15, contrast: 0.25 do\n  image "assets/product.png", width: 420, height: 260\nend',
+      "desaturate" => 'desaturate width: 320, height: 220, desaturation: 0.85 do\n  image "assets/portrait.jpg", width: 320, height: 220\nend',
+      "gamma_adjust" => 'gamma_adjust width: 420, height: 260, gamma: 1.6 do\n  image "assets/scan.png", width: 420, height: 260\nend',
+      "level_adjust" => 'level_adjust width: 420, height: 260, gamma: 1.2, gamma_red: 1.4, minimum_input: "#1a1a1aff", maximum_input: "#f0f0f0ff" do\n  image "assets/scan.png", width: 420, height: 260\nend',
+      "hue_saturation" => 'hue_saturation width: 320, height: 220, hue: 0.08, saturation: 0.3, lightness: -0.05 do\n  image "assets/fabric.jpg", width: 320, height: 220\nend',
+      "hue_colorize" => 'hue_colorize width: 320, height: 220, hue: 0.28, saturation: 0.8, lightness: 0.0 do\n  image "assets/badge.png", width: 320, height: 220\nend',
+      "color_overlay" => 'color_overlay width: 320, height: 220, color: "#b7ff5a66" do\n  image "assets/icon.png", width: 220, height: 220\nend',
+      "effect_linear_gradient" => 'effect_linear_gradient width: 420, height: 180, colors: %w[#b7ff5a #66e3ff], stops: [0.0, 1.0], start_x: 0, start_y: 0, end_x: 420, end_y: 0',
+      "effect_radial_gradient" => 'effect_radial_gradient width: 360, height: 360, colors: %w[#ffffff #101408], horizontal_radius: 180, vertical_radius: 180, angle: 0',
+      "effect_conical_gradient" => 'effect_conical_gradient width: 320, height: 320, colors: %w[#b7ff5a #a88bff #b7ff5a], angle: 45 do\n  circle 150, center_x: 160, center_y: 160, width: 320, height: 320, fill: "#ffffff"\nend',
+      "inner_shadow" => 'inner_shadow width: 320, height: 200, radius: 12, samples: 25, spread: 0.2, color: "#000000aa", vertical_offset: 4 do\n  card { label "Recessed panel" }\nend',
+      "rectangular_glow" => 'rectangular_glow width: 360, height: 200, glow_radius: 24, spread: 0.2, corner_radius: 22, color: "#b7ff5a" do\n  card { label "Glowing card" }\nend',
+      "masked_blur" => 'rectangle id: :blur_mask, width: 420, height: 260, color: "#ffffff"\nmasked_blur width: 420, height: 260, mask_source: :blur_mask, radius: 16, samples: 33 do\n  image "assets/background.jpg", width: 420, height: 260\nend',
+      "threshold_mask" => 'rectangle id: :reveal_mask, width: 320, height: 320, color: "#808080"\nthreshold_mask width: 320, height: 320, mask_source: :reveal_mask, threshold: 0.4, spread: 0.2 do\n  image "assets/portrait.jpg", width: 320, height: 320\nend',
+      "displace" => 'rectangle id: :ripple_map, width: 420, height: 260, color: "#808080"\ndisplace width: 420, height: 260, displacement_source: :ripple_map, displacement: 0.1 do\n  image "assets/grid.png", width: 420, height: 260\nend',
+      "blend" => 'rectangle id: :blend_top, width: 320, height: 200, color: "#b7ff5a"\nblend width: 320, height: 200, foreground_source: :blend_top, mode: :color_burn do\n  image "assets/texture.png", width: 320, height: 200\nend'
     }
     normalize(examples.fetch(slug))
   end
