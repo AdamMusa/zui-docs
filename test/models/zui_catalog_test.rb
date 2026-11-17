@@ -1,10 +1,15 @@
 require "test_helper"
 
 class ZuiCatalogTest < ActiveSupport::TestCase
+  # The catalog is generated, and the registry it comes from keeps growing, so the published
+  # counts are checked against each other rather than against a number written here.
   test "contains every registered Zui component exactly once" do
-    assert_equal 241, ZuiCatalog.components.length
-    assert_equal 241, ZuiCatalog.components.map { _1.fetch("slug") }.uniq.length
-    assert_equal 241, ZuiCatalog.categories.sum { _1.fetch("count") }
+    count = ZuiCatalog.metadata.fetch("component_count")
+
+    assert_operator count, :>=, 241
+    assert_equal count, ZuiCatalog.components.length
+    assert_equal count, ZuiCatalog.components.map { _1.fetch("slug") }.uniq.length
+    assert_equal count, ZuiCatalog.categories.sum { _1.fetch("count") }
   end
 
   test "preserves the source registry contract" do

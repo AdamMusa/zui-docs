@@ -28,7 +28,14 @@ CATEGORY_DESCRIPTIONS = {
   "Animation, state, and timing" => "Coordinate motion, transitions, state changes, easing, and scheduled work in the native scene graph.",
   "Effects" => "Add GPU-backed blur, masks, glow, shadows, color treatments, and layered visual polish.",
   "Multimedia and capture" => "Play, record, route, and capture native audio, video, camera, screen, and window sources.",
-  "Models and utilities" => "Connect native models, settings, paths, filesystem listings, filtering, and the system clipboard."
+  "Models and utilities" => "Connect native models, settings, paths, filesystem listings, filtering, and the system clipboard.",
+  "Mobile permissions" => "Request and observe the iOS and Android capabilities an application needs before it touches protected data.",
+  "Mobile virtual keyboard" => "Present Qt's on-screen keyboard, handwriting input, locales, and keyboard-aware text entry.",
+  "Mobile sensors" => "Read device motion, orientation, environment, and proximity hardware through native sensor backends.",
+  "Mobile positioning" => "Track device position and satellite visibility with the platform's own location services.",
+  "Mobile maps" => "Render interactive maps, overlays, routes, geocoding, and place search through Qt Location.",
+  "Mobile speech" => "Speak text with the platform speech engine, including locale, voice, rate, and pitch control.",
+  "Mobile web content" => "Embed the platform web view and connect to WebSocket endpoints from the native process."
 }.freeze
 
 DESCRIPTIONS = {

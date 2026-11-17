@@ -18,8 +18,12 @@ module ApplicationHelper
       "Menus, dialogs, and feedback" => "feedback", "Data and collections" => "collection",
       "Charts and visualization" => "chart", "Drawing and interaction" => "effect",
       "Animation, state, and timing" => "motion", "Effects" => "effect",
-      "Multimedia and capture" => "media", "Models and utilities" => "utility"
-    }.fetch(component.fetch("category"))
+      "Multimedia and capture" => "media", "Models and utilities" => "utility",
+      "Mobile permissions" => "utility", "Mobile virtual keyboard" => "input",
+      "Mobile sensors" => "utility", "Mobile positioning" => "utility",
+      "Mobile maps" => "content", "Mobile speech" => "media",
+      "Mobile web content" => "content"
+    }.fetch(component.fetch("category"), "utility")
   end
 
   def component_icon(component)
@@ -29,7 +33,11 @@ module ApplicationHelper
       "Menus, dialogs, and feedback" => "◉", "Data and collections" => "▦",
       "Charts and visualization" => "⌁", "Drawing and interaction" => "✦",
       "Animation, state, and timing" => "◌", "Effects" => "✺",
-      "Multimedia and capture" => "▶", "Models and utilities" => "◇"
-    }.fetch(component.fetch("category"))
+      "Multimedia and capture" => "▶", "Models and utilities" => "◇",
+      "Mobile permissions" => "⚿", "Mobile virtual keyboard" => "⌨",
+      "Mobile sensors" => "◎", "Mobile positioning" => "⌖",
+      "Mobile maps" => "⬡", "Mobile speech" => "◗",
+      "Mobile web content" => "◍"
+    }.fetch(component.fetch("category"), "◇")
   end
 end
