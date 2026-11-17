@@ -28,7 +28,10 @@ CATEGORY_DESCRIPTIONS = {
   "Animation, state, and timing" => "Coordinate motion, transitions, state changes, easing, and scheduled work in the native scene graph.",
   "Effects" => "Add GPU-backed blur, masks, glow, shadows, color treatments, and layered visual polish.",
   "Multimedia and capture" => "Play, record, route, and capture native audio, video, camera, screen, and window sources.",
-  "Models and utilities" => "Connect native models, settings, paths, filesystem listings, filtering, and the system clipboard."
+  "Models and utilities" => "Connect native models, settings, paths, filesystem listings, filtering, and the system clipboard.",
+  "Raw text editing" => "Edit text through Qt's own input primitives, with selection, cursor control, input masks, and validators.",
+  "Input validation" => "Constrain text to integers, decimals, or a regular expression using Qt's own validators.",
+  "Item transforms" => "Transform a subtree with an arbitrary origin, rotation axis, per-axis scale, or full 4x4 matrix."
 }.freeze
 
 DESCRIPTIONS = {
@@ -43,6 +46,7 @@ DESCRIPTIONS = {
   "checkbox" => "A labeled boolean input with native focus, hover, and change behavior.",
   "chip" => "A compact selectable or deletable label for filters, tags, and lightweight actions.",
   "color_picker" => "A native color selection control with optional alpha and dialog presentation.",
+  "carousel" => "A PathView-backed coverflow that lays items along any Qt path, with flicking, snapping, and activation.",
   "data_table" => "A high-level native table for structured rows, columns, selection, sorting, and activation.",
   "date_picker" => "A bounded native calendar input with formatted values and popup navigation.",
   "dialog" => "A composable modal surface with native focus management, close policy, and action events.",
@@ -69,6 +73,27 @@ DESCRIPTIONS = {
   "timer" => "A declarative native timer for one-shot or repeating triggers.",
   "toast" => "A short-lived non-modal feedback message with placement, duration, severity, and dismissal.",
   "toggle" => "A descriptive boolean setting row with label, supporting copy, and change events.",
+  "accessible" => "An accessibility wrapper that gives a subtree a role, a name, state flags, and screen-reader actions.",
+  "drag_source" => "The drag half of drag and drop: carries mime data, keys, and a drop action across to a drop area.",
+  "double_validator" => "Qt's decimal validator, with bounds, decimal places, notation, and locale-aware parsing.",
+  "font_metrics" => "Font-level metrics for a typeface: ascent, descent, leading, line spacing, bearings, and elision.",
+  "graphics_info" => "The graphics API, shader language, version, and profile the scene graph is actually running on.",
+  "input_method" => "The platform input method: keyboard visibility, geometry, locale, direction, and show or hide commands.",
+  "int_validator" => "Qt's integer validator, with inclusive bounds and locale-aware parsing.",
+  "item" => "The bare Qt Quick item: a plain parent with clipping, transform origin, smoothing, and focus.",
+  "layout_mirroring" => "A right-to-left mirroring wrapper that flips layout direction for an entire subtree.",
+  "matrix4x4" => "A container transformed by an arbitrary 4x4 matrix given as sixteen row-major values.",
+  "mouse_area" => "Qt's classic mouse region, with composed clicks, press-and-hold, wheel events, and built-in item dragging.",
+  "path_interpolator" => "Reports the point and tangent angle at a fractional position along a path.",
+  "regex_validator" => "Qt's regular expression validator, compiled to a real QRegularExpression with flag support.",
+  "rotation" => "A container rotated by an angle about an arbitrary origin and axis, not just the z axis.",
+  "scale" => "A container scaled independently on each axis about an arbitrary origin.",
+  "screen_info" => "Live screen geometry, pixel density, device pixel ratio, orientation, and display identity.",
+  "shortcut" => "A context-scoped keyboard shortcut that reports the platform-native text for its binding.",
+  "system_palette" => "The platform palette roles for the active, inactive, or disabled color group.",
+  "text_edit" => "Qt's multi-line text editing primitive, with text formats, selection, links, and document loading and saving.",
+  "text_input" => "Qt's single-line text editing primitive, with input masks, echo modes, inline validators, and cursor control.",
+  "translate" => "A container shifted by an x and y offset without affecting layout.",
   "video" => "A convenient native video player surface with looping, orientation, mirroring, and transport events."
 }.freeze
 
