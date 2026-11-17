@@ -147,6 +147,9 @@ DESCRIPTIONS = {
   "pdf_link_model" => "Lists the links on a PDF page, distinguishing web links from internal destinations.",
   "pdf_bookmark_model" => "Walks a PDF outline one branch at a time, listing each entry's title, level, and destination.",
   "video_sink" => "Receives frames from a media player or capture session without drawing them, to confirm frames are arriving and at what size.",
+  "system_info" => "Reports the platform's kernel, product, CPU architecture, ABI and machine identifiers from Qt's SystemInformation singleton.",
+  "network_status" => "Reports network reachability, captive-portal state, transport medium and whether the connection is metered, and watches for changes. Needs the Android ACCESS_NETWORK_STATE permission.",
+  "system_tray_icon" => "A native system tray icon with a tooltip, a native menu, and desktop notifications. Reports that no tray is available on platforms without one, mobile included.",
 
   # Models: QtQml.Models, QtQml.XmlListModel, Qt.labs.qmlmodels.
   "object_model" => "Holds a container's declared child controls as a model, so a view can present a fixed, heterogeneous set of controls.",

@@ -710,6 +710,10 @@ end',
         end
       RUBY
       "clipboard" => 'clipboard "Copied from Zui", watch: true, revision: 1',
+      "system_info" => 'system_info refresh_revision: 1',
+      "network_status" => 'network_status watch: true, refresh_revision: 1',
+      "responsive_view" => 'responsive_view card_width: 280, spacing: 16, padding: 16, max_columns: 4 do\n  card { label "Processes" }\n  card { label "Memory" }\nend',
+      "system_tray_icon" => 'system_tray_icon tooltip: "Zui", icon_name: "applications-system", menu_items: [{ text: "Open", enabled: true }, { separator: true }, { text: "Quit" }], command: :show, command_revision: 1',
       "cursor_surface" => 'cursor_surface cursor: 1, current: 0, outline: true, bordered: true, foreground: "#f5f5f0", accent: "#b7ff5a" do\n  label "Keyboard-controlled surface"\nend'
     }
     normalize(examples.fetch(slug))
