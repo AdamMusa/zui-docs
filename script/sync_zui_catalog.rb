@@ -28,7 +28,14 @@ CATEGORY_DESCRIPTIONS = {
   "Animation, state, and timing" => "Coordinate motion, transitions, state changes, easing, and scheduled work in the native scene graph.",
   "Effects" => "Add GPU-backed blur, masks, glow, shadows, color treatments, and layered visual polish.",
   "Multimedia and capture" => "Play, record, route, and capture native audio, video, camera, screen, and window sources.",
-  "Models and utilities" => "Connect native models, settings, paths, filesystem listings, filtering, and the system clipboard."
+  "Models and utilities" => "Connect native models, settings, paths, filesystem listings, filtering, and the system clipboard.",
+  "Mobile permissions" => "Request and observe the platform permissions a device capability needs before it can be used.",
+  "Mobile sensors" => "Read device motion, orientation, environment, and proximity through the native QtSensors backends.",
+  "Mobile positioning" => "Track device position and satellites, and describe places as structured coordinates and addresses.",
+  "Mobile maps" => "Render native maps, choose a geo service provider, and query geocoding, routing, and places.",
+  "Mobile speech" => "Speak text through the platform engine and inspect the voices and locales it offers.",
+  "Mobile web content" => "Embed the platform web view and open native WebSocket clients and servers.",
+  "Mobile virtual keyboard" => "Present and configure Qt's on-screen keyboard, handwriting input, and input context."
 }.freeze
 
 DESCRIPTIONS = {
@@ -69,7 +76,99 @@ DESCRIPTIONS = {
   "timer" => "A declarative native timer for one-shot or repeating triggers.",
   "toast" => "A short-lived non-modal feedback message with placement, duration, severity, and dismissal.",
   "toggle" => "A descriptive boolean setting row with label, supporting copy, and change events.",
-  "video" => "A convenient native video player surface with looping, orientation, mirroring, and transport events."
+  "video" => "A convenient native video player surface with looping, orientation, mirroring, and transport events.",
+
+  # Sensors. Qt's reading types are uncreatable, so each sensor reports its values on a
+  # reading event and its QtSensors metadata on a metadata event.
+  "sensor_manager" => "Enumerates the sensor types the device registers, the backends behind each one, and each type's default.",
+  "accelerometer" => "Reports device acceleration on three axes, with the sensor's data rates, output ranges, and buffering. Needs the Android HIGH_SAMPLING_RATE_SENSORS permission above 200 Hz and an iOS NSMotionUsageDescription.",
+  "gyroscope" => "Reports angular velocity on three axes for rotation-aware interfaces. Needs an iOS NSMotionUsageDescription.",
+  "magnetometer" => "Reports the magnetic field on three axes with its calibration level. Needs an iOS NSMotionUsageDescription.",
+  "compass" => "Reports device azimuth and calibration level for heading-aware interfaces. Needs an iOS NSMotionUsageDescription.",
+  "rotation_sensor" => "Reports device rotation on three axes, and whether the backend provides the z axis at all. Needs an iOS NSMotionUsageDescription.",
+  "tilt_sensor" => "Reports x and y tilt and can recalibrate its zero point to the device's current attitude. Needs an iOS NSMotionUsageDescription.",
+  "tap_sensor" => "Reports taps on the device body, optionally distinguishing double taps. Needs an iOS NSMotionUsageDescription.",
+  "orientation_sensor" => "Reports which way up the device is held, as a discrete orientation.",
+  "proximity_sensor" => "Reports whether an object is near the device, for screen-off-on-ear behaviour.",
+  "ir_proximity_sensor" => "Reports raw infrared reflectance, the continuous measurement behind proximity detection.",
+  "light_sensor" => "Reports measured illuminance in lux for adaptive brightness.",
+  "ambient_light_sensor" => "Reports ambient light as a discrete level, from dark to sunny.",
+  "ambient_temperature_sensor" => "Reports ambient air temperature in degrees Celsius.",
+  "humidity_sensor" => "Reports relative and absolute humidity from the device's hygrometer.",
+  "pressure_sensor" => "Reports barometric pressure, and sensor temperature where the backend supplies it.",
+  "lid_sensor" => "Reports whether the front or back lid of a convertible device is closed.",
+
+  # Positioning.
+  "position_source" => "Tracks device position with accuracy, speed, direction, and per-field validity, and can be started, stopped, and updated on demand. Needs an Android location permission and an iOS NSLocationWhenInUseUsageDescription.",
+  "satellite_source" => "Reports the satellites in view and in use with signal strength, elevation, azimuth, and satellite system. Needs an Android location permission and an iOS NSLocationWhenInUseUsageDescription.",
+  "geo_address" => "A structured postal address that keeps Qt's generated single-line label when no explicit text is given.",
+  "geo_location" => "A place as a coordinate plus its address, bounding shape, and extended attributes.",
+  "coordinate_animation" => "Animates a map coordinate along a great circle, with shortest, eastward, or westward direction.",
+
+  # Maps.
+  "map_plugin" => "Chooses and configures a geo service provider once, reports what it supports, and shares it across maps and models.",
+  "map" => "A native interactive map with pan, pinch, and wheel gestures, selectable map types, and tap events. Online providers need the Android INTERNET permission.",
+  "map_circle" => "A filled circle of a given radius drawn on a map at a coordinate.",
+  "map_rectangle" => "A rectangular region drawn on a map between two corner coordinates.",
+  "map_polygon" => "A filled polygon drawn on a map through a list of coordinates.",
+  "map_polyline" => "A stroked path drawn on a map through a list of coordinates.",
+  "map_route" => "A stroked route line drawn on a map, for rendering a computed route.",
+  "map_marker" => "A map item that anchors arbitrary Zui content to a coordinate.",
+  "map_item_group" => "Groups map items so they can be shown, hidden, and reasoned about together.",
+  "map_item_view" => "Renders one map marker per row of a collection, bound to latitude, longitude, and label fields.",
+  "map_copyright" => "The provider attribution a map is required to display, with link events.",
+  "geo_json_data" => "Loads and saves GeoJSON as map items for rendering on a map.",
+  "geocode_model" => "Resolves an address or coordinate into located results through the provider's geocoding service.",
+  "route_model" => "Computes routes between waypoints with travel mode, optimization, and alternatives.",
+  "place_search" => "Searches the provider's place database within an area, with relevance and recommendation modes.",
+  "place_suggestions" => "Returns search-as-you-type suggestions for a partial place term.",
+  "place_categories" => "Lists the provider's place categories, flat or hierarchical.",
+  "place_details" => "Loads, saves, and removes a single place and its attribution.",
+  "place_category" => "Loads, saves, and removes a single place category.",
+
+  # Device, speech, web, and keyboard.
+  "text_to_speech" => "Speaks text through the platform engine, and reports the voices, locales, and capabilities it offers.",
+  "web_view" => "Embeds the platform web view with navigation, cookies, JavaScript evaluation, and effective settings readback. Needs the Android INTERNET permission.",
+  "virtual_keyboard" => "Presents Qt's on-screen keyboard and reports its active state and language switches.",
+  "handwriting_input" => "An overlay that turns strokes into text through Qt's handwriting recogniser.",
+  "keyboard_context" => "The shared input context: commits text, sends keys, and reports locale changes.",
+  "keyboard_settings" => "Configures the on-screen keyboard's style, locales, full-screen mode, and dictionaries.",
+  "keyboard_text_field" => "A text field wired to the on-screen keyboard's enter-key action and input-method hints.",
+
+  # PDF.
+  "pdf_document" => "Loads a PDF once and reports its metadata, page labels, and page sizes, to be shared by several views.",
+  "pdf_multi_page_view" => "A continuously scrolling multi-page PDF view with zoom, rotation, search, and selection.",
+  "pdf_page_view" => "A single-page PDF view with its own pinch and wheel zoom.",
+  "pdf_scrollable_page_view" => "A single-page PDF view inside a scroll view, with zoom and rotation.",
+  "pdf_page_image" => "One PDF page rendered as an image at a chosen resolution.",
+  "pdf_page_navigator" => "A standalone PDF navigation history for building a custom viewer, with jump, back, and forward.",
+  "pdf_search_model" => "Searches a PDF and reports each hit's page, position, and surrounding context.",
+  "pdf_selection" => "Selects text in a PDF between two points, and copies it to the clipboard.",
+  "pdf_link_model" => "Lists the links on a PDF page, distinguishing web links from internal destinations.",
+  "pdf_bookmark_model" => "Walks a PDF outline one branch at a time, listing each entry's title, level, and destination.",
+  "video_sink" => "Receives frames from a media player or capture session without drawing them, to confirm frames are arriving and at what size.",
+  "system_info" => "Reports the platform's kernel, product, CPU architecture, ABI and machine identifiers from Qt's SystemInformation singleton.",
+  "network_status" => "Reports network reachability, captive-portal state, transport medium and whether the connection is metered, and watches for changes. Needs the Android ACCESS_NETWORK_STATE permission.",
+  "system_tray_icon" => "A native system tray icon with a tooltip, a native menu, and desktop notifications. Reports that no tray is available on platforms without one, mobile included.",
+
+  # Models: QtQml.Models, QtQml.XmlListModel, Qt.labs.qmlmodels.
+  "object_model" => "Holds a container's declared child controls as a model, so a view can present a fixed, heterogeneous set of controls.",
+  "instantiator" => "Creates a container's children on demand, optionally asynchronously, reporting each object as it appears and leaves.",
+  "item_selection_model" => "Tracks which rows of a model are selected and which row is current, applying the selection Ruby declares and reporting what changes.",
+  "xml_list_model" => "Fetches an XML document and exposes the elements matched by an XPath query as rows keyed by role, with load status and progress.",
+  "xml_list_model_role" => "Maps one role of an xml_list_model row to an element or an attribute of the matched XML node.",
+  "table_model" => "A native table model built from Ruby rows and declared columns, carrying Qt's full column role surface.",
+  "table_model_column" => "Declares one table_model column and which row key supplies each of its Qt roles, from display to check state.",
+  "locale" => "Answers locale questions from Qt's CLDR data and formats numbers, currency, dates, times, and data sizes for a named or system locale.",
+
+  # Bindings and the hierarchical state machine: QtQml, QtQml.StateMachine.
+  "property_binding" => "A live declarative link that keeps one control's property following another's, gated by a condition and restored when it lapses.",
+  "state_machine" => "A hierarchical state machine with nested and parallel regions, history and timed transitions, driven by named events from Ruby.",
+  "machine_state" => "One state of a state_machine, which may nest its own child states and transitions and reports its own entry and exit.",
+  "final_state" => "A terminal state that finishes its enclosing state_machine when it is entered.",
+  "history_state" => "A pseudo-state that returns a compound state to the child it last occupied, either shallowly or deeply.",
+  "signal_transition" => "Moves a state_machine out of its enclosing state when Ruby fires the event it listens for.",
+  "timeout_transition" => "Moves a state_machine out of its enclosing state once that state has been active for a set time."
 }.freeze
 
 def title_for(slug)
