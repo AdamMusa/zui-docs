@@ -428,6 +428,135 @@ module ZuiExamples
       "shader_effect" => 'shader_effect "assets/shaders/plasma.frag.qsb", width: 640, height: 360, running: true, intensity: 0.85',
       "shader_effect_source" => 'shader_effect_source width: 420, height: 240, live: true, recursive: false do\n  image "assets/source.png", width: 420, height: 240\nend',
       "particle_system" => 'particle_system width: 640, height: 360, running: true, emit_rate: 90, life_span: 1_800, size: 9, end_size: 1, color: "#b7ff5a", gravity: 24',
+      "emitter" => <<~RUBY.chomp,
+        system = particle_system width: 640, height: 360, running: true, emit_rate: 0
+
+        rise = angle_direction angle: 270, magnitude: 120, angle_variation: 25
+
+        emitter system,
+          group: "sparks",
+          velocity: rise,
+          emit_rate: 90,
+          life_span: 1_400,
+          size: 10,
+          end_size: 2,
+          width: 640,
+          height: 40,
+          y: 320
+
+        image_particle system, groups: ["sparks"], color: "#b7ff5a", color_variation: 0.2
+      RUBY
+      "trail_emitter" => <<~RUBY.chomp,
+        system = particle_system width: 640, height: 360, running: true, emit_rate: 0
+
+        emitter system, group: "comet", emit_rate: 4, life_span: 2_400, size: 14, width: 640, height: 360
+
+        trail_emitter system,
+          group: "dust",
+          follow: "comet",
+          emit_rate_per_particle: 24,
+          life_span: 700,
+          size: 4,
+          width: 640,
+          height: 360
+
+        image_particle system, groups: ["comet", "dust"], color: "#66e3ff"
+      RUBY
+      "image_particle" => <<~RUBY.chomp,
+        system = particle_system width: 640, height: 360, running: true, emit_rate: 0
+
+        emitter system, group: "embers", emit_rate: 70, life_span: 1_600, size: 12, width: 640, height: 360
+
+        image_particle system,
+          groups: ["embers"],
+          source: "assets/particles/ember.png",
+          color: "#ffb347",
+          color_variation: 0.3,
+          alpha: 0.9,
+          rotation_velocity: 90,
+          entry_effect: :scale
+      RUBY
+      "item_particle" => <<~RUBY.chomp,
+        system = particle_system width: 480, height: 320, running: true, emit_rate: 0
+
+        emitter system, group: "cards", emit_rate: 2, life_span: 4_000, size: 48, width: 480, height: 320
+
+        first = card(width: 48, height: 48) { icon :star }
+        second = card(width: 48, height: 48) { icon :heart }
+
+        item_particle system, groups: ["cards"], items: [first, second], fade: true
+      RUBY
+      "particle_group" => <<~RUBY.chomp,
+        system = particle_system width: 640, height: 360, running: true, emit_rate: 0
+
+        particle_group system, name: "spark", duration: 600, to: { "smoke" => 1 }
+        particle_group system, name: "smoke", duration: 1_800
+
+        emitter system, group: "spark", emit_rate: 60, life_span: 2_400, size: 8, width: 640, height: 360
+
+        image_particle system, groups: ["spark"], color: "#ffd166"
+        image_particle system, groups: ["smoke"], color: "#8a8a99", alpha: 0.4
+      RUBY
+      "ellipse_shape" => particle_shape_example("ellipse_shape", "fill: true"),
+      "rectangle_shape" => particle_shape_example("rectangle_shape", "fill: false"),
+      "line_shape" => particle_shape_example("line_shape", "mirrored: true"),
+      "mask_shape" => particle_shape_example("mask_shape", 'source: "assets/particles/logo-mask.png"'),
+      "angle_direction" => particle_direction_example("angle_direction", "angle: 270, magnitude: 140, angle_variation: 30"),
+      "point_direction" => particle_direction_example("point_direction", "x: 0, y: -120, x_variation: 40"),
+      "target_direction" => <<~RUBY.chomp,
+        system = particle_system width: 480, height: 320, running: true, emit_rate: 0
+
+        hub = rectangle width: 24, height: 24, color: "#b7ff5a"
+
+        pull = target_direction target_item: hub, magnitude: 160, target_variation: 20
+
+        emitter system, group: "inbound", velocity: pull, emit_rate: 80, life_span: 1_200, size: 6, width: 480, height: 320
+
+        image_particle system, groups: ["inbound"], color: "#66e3ff"
+      RUBY
+      "cumulative_direction" => <<~RUBY.chomp,
+        system = particle_system width: 480, height: 320, running: true, emit_rate: 0
+
+        rise = angle_direction angle: 270, magnitude: 90
+        drift = point_direction x: 40, y: 0, x_variation: 15
+
+        combined = cumulative_direction [rise, drift]
+
+        emitter system, group: "smoke", velocity: combined, emit_rate: 60, life_span: 1_800, size: 10, width: 480, height: 320
+
+        image_particle system, groups: ["smoke"], color: "#cfcfd8", alpha: 0.5
+      RUBY
+      "affector" => <<~RUBY.chomp,
+        system = particle_system width: 480, height: 320, running: true, emit_rate: 0
+
+        emitter system, group: "drops", emit_rate: 70, life_span: 1_600, size: 8, width: 480, height: 320
+
+        nudge = point_direction x: 0, y: 60
+
+        affector system, groups: ["drops"], relative: false, velocity: nudge, width: 480, height: 160
+
+        image_particle system, groups: ["drops"], color: "#66e3ff"
+      RUBY
+      "age" => particle_affector_example("age", "life_left: 120, advance_position: false"),
+      "attractor" => particle_affector_example("attractor", "strength: 220, point_x: 240, point_y: 160, affected_parameter: :acceleration, proportional_to_distance: :inverse_quadratic"),
+      "friction" => particle_affector_example("friction", "factor: 0.6, threshold: 20"),
+      "gravity" => particle_affector_example("gravity", "magnitude: 60, angle: 90"),
+      "group_goal" => <<~RUBY.chomp,
+        system = particle_system width: 480, height: 320, running: true, emit_rate: 0
+
+        particle_group system, name: "cold"
+        particle_group system, name: "hot"
+
+        emitter system, group: "cold", emit_rate: 60, life_span: 2_000, size: 9, width: 480, height: 320
+
+        group_goal system, groups: ["cold"], goal_state: "hot", jump: true, y: 160, width: 480, height: 160
+
+        image_particle system, groups: ["cold"], color: "#66e3ff"
+        image_particle system, groups: ["hot"], color: "#ff6b6b"
+      RUBY
+      "sprite_goal" => particle_affector_example("sprite_goal", 'goal_state: "burning", jump: true'),
+      "turbulence" => particle_affector_example("turbulence", "strength: 48, grid_size: 128"),
+      "wander" => particle_affector_example("wander", "pace: 90, x_variance: 40, y_variance: 12, affected_parameter: :position"),
       "drag_area" => 'drag_area axis: :both, minimum_x: 0, maximum_x: 360, minimum_y: 0, maximum_y: 200, width: 420, height: 260 do\n  card(width: 80, height: 80) { icon :move }
 end',
       "drop_area" => 'drop_area keys: %w[files images], width: 420, height: 220 do\n  center { label "Drop files here" }
@@ -455,7 +584,11 @@ end',
         motion = path_animation dot,
           path: "M 20 120 C 120 10, 240 230, 360 120",
           orientation: :right_first,
+          orientation_entry_duration: 160,
+          orientation_exit_duration: 160,
+          end_rotation: 0,
           duration: 1_800,
+          always_run: true,
           running: true
 
         on motion, :finish do
@@ -473,7 +606,7 @@ end',
       "anchor_animation" => target_animation("anchor_animation", "duration: 280, easing: :out_cubic"),
       "parent_animation" => 'pane id: :left, width: 220, height: 180\npane id: :right, width: 220, height: 180\ntile = rectangle width: 60, height: 60, color: "#b7ff5a"\nparent_animation tile, new_parent: :right, via: :left, duration: 360, running: true',
       "opacity_animator" => target_animation("opacity_animator", "from: 0.0, to: 1.0"),
-      "rotation_animator" => target_animation("rotation_animator", "from: 0, to: 360"),
+      "rotation_animator" => target_animation("rotation_animator", "from: 0, to: 270, direction: :shortest, always_run: true"),
       "scale_animator" => target_animation("scale_animator", "from: 0.8, to: 1.0"),
       "x_animator" => target_animation("x_animator", "from: 0, to: 240"),
       "y_animator" => target_animation("y_animator", "from: 0, to: 160"),
@@ -487,7 +620,141 @@ end',
       "property_changes" => 'tile = rectangle width: 120, height: 80, color: "#3a3a42"\nproperty_changes tile, properties: { opacity: 1.0, scale: 1.08 }, revision: 1',
       "anchor_changes" => 'rectangle id: :frame, width: 420, height: 220\ntile = rectangle width: 80, height: 80, color: "#b7ff5a"\nanchor_changes tile, anchors: { horizontal_center: :frame, vertical_center: :frame }, margins: {}, revision: 1',
       "parent_change" => 'pane id: :destination, width: 320, height: 200\ntile = rectangle width: 80, height: 80, color: "#b7ff5a"\nparent_change tile, parent: :destination, x: 24, y: 24, revision: 1',
-      "timer" => 'clock = timer 1_000, repeat: true, running: true\non clock, :trigger do\n  puts "Timer triggered"\nend'
+      "timer" => 'clock = timer 1_000, repeat: true, running: true\non clock, :trigger do\n  puts "Timer triggered"\nend',
+      "timeline" => <<~RUBY.chomp,
+        tile = rectangle width: 80, height: 80, color: "#b7ff5a"
+
+        start = keyframe frame: 0, value: 0
+        finish = keyframe frame: 100, value: 280, easing: :in_out_cubic
+
+        slide = keyframe_group target: tile, property: :x, keyframes: [start, finish]
+
+        play = timeline_animation from: 0, to: 100, duration: 1_200, loops: :infinite, ping_pong: true
+
+        stage = timeline start_frame: 0,
+          end_frame: 100,
+          current_frame: 0,
+          enabled: true,
+          keyframe_groups: [slide],
+          animations: [play]
+
+        on stage, :frame_change do |event|
+          puts "Frame: \#{event.fetch("value")}"
+        end
+      RUBY
+      "keyframe" => <<~RUBY.chomp,
+        tile = rectangle width: 80, height: 80, color: "#b7ff5a"
+
+        dim = keyframe frame: 0, value: 0.2
+        bright = keyframe frame: 60, value: 1.0, easing: :out_cubic
+
+        fade = keyframe_group target: tile, property: :opacity, keyframes: [dim, bright]
+
+        timeline start_frame: 0, end_frame: 60, current_frame: 30, enabled: true, keyframe_groups: [fade]
+      RUBY
+      "keyframe_group" => <<~RUBY.chomp,
+        tile = rectangle width: 80, height: 80, color: "#b7ff5a"
+
+        grow = keyframe_group target: tile,
+          property: :scale,
+          keyframes: [keyframe(frame: 0, value: 0.8), keyframe(frame: 40, value: 1.0)]
+
+        timeline start_frame: 0, end_frame: 40, current_frame: 20, enabled: true, keyframe_groups: [grow]
+      RUBY
+      "timeline_animation" => <<~RUBY.chomp,
+        tile = rectangle width: 80, height: 80, color: "#b7ff5a"
+
+        slide = keyframe_group target: tile,
+          property: :x,
+          keyframes: [keyframe(frame: 0, value: 0), keyframe(frame: 100, value: 240)]
+
+        play = timeline_animation from: 0, to: 100, duration: 900, loops: 2, ping_pong: true, running: true
+
+        timeline start_frame: 0, end_frame: 100, enabled: true, keyframe_groups: [slide], animations: [play]
+
+        on play, :finish do
+          puts "Timeline animation finished"
+        end
+      RUBY
+      "timeline_animation_node" => <<~RUBY.chomp,
+        tile = rectangle width: 80, height: 80, color: "#b7ff5a"
+
+        slide = keyframe_group target: tile,
+          property: :x,
+          keyframes: [keyframe(frame: 0, value: 0), keyframe(frame: 100, value: 240)]
+
+        play = timeline_animation from: 0, to: 100, duration: 900
+
+        stage = timeline start_frame: 0, end_frame: 100, enabled: true, keyframe_groups: [slide], animations: [play]
+
+        timeline_animation_node timeline: stage, animation: play, output_enabled: true
+      RUBY
+      "blend_animation_node" => <<~RUBY.chomp,
+        tile = rectangle width: 80, height: 80, color: "#b7ff5a"
+
+        slide = keyframe_group target: tile,
+          property: :x,
+          keyframes: [keyframe(frame: 0, value: 0), keyframe(frame: 100, value: 240)]
+
+        slow = timeline_animation from: 0, to: 100, duration: 1_800
+        fast = timeline_animation from: 0, to: 100, duration: 400
+
+        stage = timeline start_frame: 0, end_frame: 100, enabled: true, keyframe_groups: [slide], animations: [slow, fast]
+
+        blend_animation_node source1: timeline_animation_node(timeline: stage, animation: slow),
+          source2: timeline_animation_node(timeline: stage, animation: fast),
+          weight: 0.35,
+          output_enabled: true
+      RUBY
+      "sprite" => <<~RUBY.chomp,
+        idle = sprite "idle",
+          source: "assets/sprites/robot.png",
+          frame_count: 4,
+          frame_width: 48,
+          frame_height: 48,
+          frame_duration: 120,
+          to: { "walk" => 2 }
+
+        walk = sprite "walk",
+          source: "assets/sprites/robot.png",
+          frame_count: 6,
+          frame_width: 48,
+          frame_height: 48,
+          frame_y: 48,
+          frame_rate: 12
+
+        sprite_sequence [idle, walk], width: 96, height: 96, running: true
+      RUBY
+      "animated_sprite" => <<~RUBY.chomp,
+        walk = animated_sprite "assets/sprites/walk-strip.png",
+          frame_count: 8,
+          frame_width: 48,
+          frame_height: 48,
+          frame_rate: 12,
+          loops: :infinite,
+          running: true,
+          width: 96,
+          height: 96
+
+        on walk, :finish do
+          puts "Sprite animation finished"
+        end
+      RUBY
+      "sprite_sequence" => <<~RUBY.chomp,
+        idle = sprite "idle", source: "assets/sprites/robot.png", frame_count: 4, frame_width: 48, frame_height: 48, frame_duration: 140
+        walk = sprite "walk", source: "assets/sprites/robot.png", frame_count: 6, frame_width: 48, frame_height: 48, frame_y: 48, frame_rate: 12
+
+        robot = sprite_sequence [idle, walk],
+          width: 96,
+          height: 96,
+          running: true,
+          interpolate: true,
+          goal_sprite: "walk"
+
+        on robot, :current_change do |event|
+          puts "Sprite: \#{event.fetch("name")}"
+        end
+      RUBY
     }
     normalize(examples.fetch(slug))
   end
@@ -544,6 +811,44 @@ end',
         label "System status", bold: true
         text "All services are healthy."
       end
+    RUBY
+  end
+
+  # Particle building blocks are referenced by the emitter or affector that uses
+  # them, so each example wires the block into a running system.
+  def particle_shape_example(name, options)
+    <<~RUBY.chomp
+      system = particle_system width: 480, height: 320, running: true, emit_rate: 0
+
+      area = #{name} #{options}
+
+      emitter system, group: "motes", shape: area, emit_rate: 80, life_span: 1_400, size: 7, width: 480, height: 320
+
+      image_particle system, groups: ["motes"], color: "#b7ff5a"
+    RUBY
+  end
+
+  def particle_direction_example(name, options)
+    <<~RUBY.chomp
+      system = particle_system width: 480, height: 320, running: true, emit_rate: 0
+
+      vector = #{name} #{options}
+
+      emitter system, group: "motes", velocity: vector, emit_rate: 80, life_span: 1_400, size: 7, width: 480, height: 320
+
+      image_particle system, groups: ["motes"], color: "#b7ff5a"
+    RUBY
+  end
+
+  def particle_affector_example(name, options)
+    <<~RUBY.chomp
+      system = particle_system width: 480, height: 320, running: true, emit_rate: 0
+
+      emitter system, group: "motes", emit_rate: 80, life_span: 1_600, size: 8, width: 480, height: 320
+
+      #{name} system, groups: ["motes"], #{options}, width: 480, height: 320
+
+      image_particle system, groups: ["motes"], color: "#b7ff5a"
     RUBY
   end
 
