@@ -463,6 +463,95 @@ end',
         end
       RUBY
       "property_animation" => target_animation("property_animation", "property: :scale, from: 0.85, to: 1.0"),
+      "property_binding" => <<~RUBY.chomp,
+        zoom = slider 1.0, id: :zoom, minimum: 0.5, maximum: 2.0, step: 0.1
+        preview = rectangle id: :preview, width: 120, height: 120, color: "#b7ff5a"
+
+        property_binding preview,
+          property: :scale,
+          source: zoom,
+          source_property: :value,
+          when: true,
+          restore_mode: :binding_or_value
+      RUBY
+      "state_machine" => <<~RUBY.chomp,
+        machine = state_machine running: true, event: :start, event_revision: 1 do
+          machine_state :idle, initial: true do
+            signal_transition on: :start, target: :running
+          end
+
+          machine_state :running do
+            signal_transition on: :stop, target: :idle
+            timeout_transition timeout: 5_000, target: :done
+          end
+
+          final_state :done
+        end
+
+        on machine, :change do |payload|
+          puts payload.fetch("active").inspect
+        end
+      RUBY
+      "machine_state" => <<~RUBY.chomp,
+        state_machine running: true do
+          machine_state :loading, initial: true do
+            signal_transition on: :ready, target: :ready
+          end
+
+          machine_state :ready, child_mode: :exclusive do
+            machine_state :summary, initial: true do
+              signal_transition on: :expand, target: :detail
+            end
+            machine_state :detail
+          end
+        end
+      RUBY
+      "final_state" => <<~RUBY.chomp,
+        state_machine running: true do
+          machine_state :working, initial: true do
+            signal_transition on: :finish, target: :complete
+          end
+
+          final_state :complete
+        end
+      RUBY
+      "history_state" => <<~RUBY.chomp,
+        state_machine running: true, initial: :work do
+          machine_state :work, initial: :step_one do
+            machine_state :step_one do
+              signal_transition on: :next, target: :step_two
+            end
+            machine_state :step_two
+
+            history_state :work_history, history_type: :shallow, default_state: :step_one
+            signal_transition on: :pause, target: :paused
+          end
+
+          machine_state :paused do
+            signal_transition on: :resume, target: :work_history
+          end
+        end
+      RUBY
+      "signal_transition" => <<~RUBY.chomp,
+        state_machine running: true, event: :submit, event_revision: 1 do
+          machine_state :editing, initial: true do
+            signal_transition on: :submit, target: :saving
+          end
+
+          machine_state :saving do
+            signal_transition on: :saved, target: :editing
+          end
+        end
+      RUBY
+      "timeout_transition" => <<~RUBY.chomp,
+        state_machine running: true do
+          machine_state :visible, initial: true do
+            timeout_transition timeout: 3_000, target: :hidden
+          end
+
+          machine_state :hidden
+        end
+      RUBY
       "pause_animation" => 'pause_animation 450, running: true',
       "script_action" => 'script_action :mark_ready, trigger: true, revision: 1',
       "property_action" => 'tile = rectangle width: 120, height: 80, opacity: 0.4\nproperty_action tile, property: :opacity, value: 1.0, revision: 1',
@@ -532,6 +621,74 @@ end',
       "folder_list_model" => 'folder_list_model "file:///home/user/Documents", name_filters: ["*.rb", "*.md"], show_files: true, show_dirs: true, sort_field: :name',
       "settings" => 'settings({ theme: "dark", density: "comfortable" }, category: "appearance", file_name: "zui.conf", sync_revision: 1)',
       "standard_paths" => 'standard_paths :documents, locate_file: "reports/latest.pdf", refresh_revision: 1',
+      "object_model" => <<~RUBY.chomp,
+        object_model revision: 1 do
+          card padding: 12 do
+            label "Overview"
+          end
+          card padding: 12 do
+            label "Details"
+          end
+        end
+      RUBY
+      "instantiator" => <<~RUBY.chomp,
+        instantiator active: true, asynchronous: true do
+          card padding: 12 do
+            label "Created on demand"
+          end
+        end
+      RUBY
+      "item_selection_model" => <<~RUBY.chomp,
+        selection = item_selection_model [
+          { id: "ruby", name: "Ruby" },
+          { id: "qt", name: "Qt" },
+          { id: "qml", name: "QML" }
+        ], key_field: :id, selected: %w[qt qml], current_index: 1, revision: 1
+
+        on selection, :selection_change do |payload|
+          puts payload.fetch("values").inspect
+        end
+      RUBY
+      "xml_list_model" => <<~RUBY.chomp,
+        feed = xml_list_model "https://example.com/feed.xml",
+          query: "/rss/channel/item", reload_revision: 1 do
+          xml_list_model_role "title", element_name: "title"
+          xml_list_model_role "link", element_name: "link"
+        end
+
+        on feed, :loaded do |payload|
+          puts payload.fetch("values").length
+        end
+      RUBY
+      "xml_list_model_role" => <<~RUBY.chomp,
+        xml_list_model "https://example.com/feed.xml", query: "/rss/channel/item" do
+          xml_list_model_role "title", element_name: "title"
+          xml_list_model_role "guid", attribute_name: "guid"
+        end
+      RUBY
+      "table_model" => <<~RUBY.chomp,
+        table_model [
+          { name: "Ada", role: "Engineer", note: "Founder" },
+          { name: "Grace", role: "Rear Admiral", note: "Compiler" }
+        ], columns: ["name", { display: "role", edit: "role", tool_tip: "note" }], revision: 1
+      RUBY
+      "table_model_column" => <<~RUBY.chomp,
+        table_model [{ name: "Ada", note: "Founder" }], revision: 1 do
+          table_model_column "name", edit: "name"
+          table_model_column "note", tool_tip: "note"
+        end
+      RUBY
+      "locale" => <<~RUBY.chomp,
+        locale "fr_FR",
+          number: 1_234_567.891,
+          currency: 1234.5,
+          date: "2026-11-16",
+          data_size: 1_536_000,
+          precision: 2,
+          refresh_revision: 1 do |payload|
+          puts payload.fetch("currency_symbol")
+        end
+      RUBY
       "clipboard" => 'clipboard "Copied from Zui", watch: true, revision: 1',
       "cursor_surface" => 'cursor_surface cursor: 1, current: 0, outline: true, bordered: true, foreground: "#f5f5f0", accent: "#b7ff5a" do\n  label "Keyboard-controlled surface"\nend'
     }
