@@ -5,9 +5,12 @@ class CatalogControllerTest < ActionDispatch::IntegrationTest
     get components_path
 
     assert_response :success
-    assert_select ".component-grid[data-catalog-target='grid'] > .component-card", 241
-    assert_select ".component-card__visual", 241
-    assert_select "[data-catalog-target='category']", 13
+    components = ZuiCatalog.components.length
+
+    assert_select ".component-grid[data-catalog-target='grid'] > .component-card", components
+    assert_select ".component-card__visual", components
+    # One filter per category, plus the chip that clears the filter.
+    assert_select "[data-catalog-target='category']", ZuiCatalog.categories.length + 1
     assert_select ".catalog-page[data-controller='catalog']", 1
     assert_select ".catalog-page[data-controller~='reveal']", 0
     assert_select ".catalog-hero[data-controller~='reveal']", 1

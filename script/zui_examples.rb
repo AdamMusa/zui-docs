@@ -22,7 +22,14 @@ module ZuiExamples
       "Animation, state, and timing" => :motion,
       "Effects" => :effect,
       "Multimedia and capture" => :multimedia,
-      "Models and utilities" => :utility
+      "Models and utilities" => :utility,
+      "Mobile permissions" => :permission,
+      "Mobile virtual keyboard" => :keyboard,
+      "Mobile sensors" => :sensor,
+      "Mobile positioning" => :positioning,
+      "Mobile maps" => :map,
+      "Mobile speech" => :speech,
+      "Mobile web content" => :web
     }.fetch(category, :utility)
   end
 
@@ -191,6 +198,13 @@ module ZuiExamples
           column(spacing: 12) { label "Detached native window" }
         end
       RUBY
+    when "control"
+      <<~RUBY
+        control padding: 16, hover_enabled: true, radius: 12,
+          background: "#101408", border_color: "#2a3320", border_width: 1 do
+          label "Composable control surface"
+        end
+      RUBY
     when "application_window"
       <<~RUBY
         application_window "Zui Studio",
@@ -235,7 +249,9 @@ module ZuiExamples
       "vector_image" => 'vector_image "assets/architecture.svg", width: 520, height: 300, fill_mode: :preserve_aspect_fit',
       "model_view_3d" => 'model_view_3d "assets/engine.glb", width: 520, height: 420, interactive: true, auto_rotate: true',
       "font_loader" => 'font_loader "assets/fonts/Display.woff2"',
-      "text_metrics" => 'text_metrics "Native Ruby UI", font_family: "Roboto Mono", font_size: 18, bold: true'
+      "text_metrics" => 'text_metrics "Native Ruby UI", font_family: "Roboto Mono", font_size: 18, bold: true',
+      "lottie_animation" => 'lottie_animation "assets/pulse.json", width: 240, height: 240, auto_play: true, loops: 0, frame_rate: 60, quality: :high',
+      "pdf_view" => 'pdf_view("assets/handbook.pdf", page: 1, zoom: 1.0, width: 720, height: 960) { |event| puts "Page #{event.fetch("page")}" }'
     }.fetch(slug).then { |example| normalize(example) }
   end
 
@@ -276,12 +292,13 @@ module ZuiExamples
       "double_spin_box" => 'double_spin_box 1.25, minimum: 0.0, maximum: 10.0, step: 0.25, decimals: 2, suffix: "×"',
       "dialog_button_box" => 'dialog_button_box %i[save cancel], alignment: :right, spacing: 8',
       "action" => 'action("Refresh", icon: :refresh, shortcut: "Ctrl+R") { puts "Refresh requested" }',
-      "action_group" => <<~RUBY.chomp
+      "action_group" => <<~RUBY.chomp,
         select = action "Select", checkable: true, checked: true
         move = action "Move", checkable: true
 
         action_group [select, move], checked: select, exclusive: true
       RUBY
+      "abstract_button" =>'abstract_button text: "Acknowledge", checkable: true, checked: false, padding: 12, radius: 10 do\n  label "Acknowledge"\nend'
     }
     normalize(examples.fetch(slug))
   end
@@ -332,7 +349,8 @@ module ZuiExamples
       "toast" => 'toast "Deployment started", opened: true, severity: :success, duration: 3_000',
       "busy_indicator" => 'busy_indicator true, width: 32, height: 32, color: "#b7ff5a"',
       "progress_ring" => 'progress_ring 72, minimum: 0, maximum: 100, size: 92, thickness: 8',
-      "skeleton" => 'skeleton width: 420, height: 96, radius: 14, animated: true'
+      "skeleton" => 'skeleton width: 420, height: 96, radius: 14, animated: true',
+      "menu_bar_item" => 'menu_bar_item("File", highlighted: false, padding: 10) { puts "File menu opened" }'
     }
     normalize(examples.fetch(slug))
   end
@@ -390,7 +408,8 @@ module ZuiExamples
       "month_grid" => 'month_grid month: 7, year: 2026, selected_date: "2026-08-24", width: 420',
       "week_number_column" => 'week_number_column month: 7, year: 2026, width: 48',
       "day_of_week_row" => 'day_of_week_row locale: "en_US", width: 420',
-      "tumbler" => 'tumbler %w[Low Medium High], current_index: 1, visible_item_count: 3, wrap: true'
+      "tumbler" => 'tumbler %w[Low Medium High], current_index: 1, visible_item_count: 3, wrap: true',
+      "calendar_model" => 'calendar_model from: "2026-01-01", to: "2026-12-31"'
     }
     normalize(examples.fetch(slug))
   end
@@ -437,7 +456,12 @@ end',
 end',
       "selection_rectangle" => 'table = table_view [{ name: "Ada" }, { name: "Grace" }], columns: [{ key: :name, label: "Name" }], selection_mode: :extended\nselection_rectangle table, mode: :drag',
       "scroll_bar" => 'list = list_view (1..50).map { |index| { label: "Item \#{index}" } }, height: 280\nscroll_bar list, orientation: :vertical, policy: :always_on',
-      "scroll_indicator" => 'list = list_view (1..50).map { |index| { label: "Item \#{index}" } }, height: 280\nscroll_indicator list, orientation: :vertical'
+      "scroll_indicator" => 'list = list_view (1..50).map { |index| { label: "Item \#{index}" } }, height: 280\nscroll_indicator list, orientation: :vertical',
+      "tap_area" => 'tap_area gesture_policy: :within_bounds, long_press_threshold: 600, width: 320, height: 120 do\n  card { label "Tap, double tap or hold" }\nend',
+      "point_handler" => 'point_handler accepted_devices: :all_devices, margin: 8, width: 420, height: 260 do\n  circle 18, center_x: 60, center_y: 60, width: 36, height: 36, fill: "#b7ff5a"\nend',
+      "multi_touch_area" => 'multi_touch_area minimum_touch_points: 1, maximum_touch_points: 5, mouse_enabled: true, width: 520, height: 320 do\n  center { label "Multi-touch surface" }\nend',
+      "wheel_area" => 'wheel_area accepted_devices: :mouse, blocking: true, width: 420, height: 240 do\n  center { label "Scroll to zoom" }\nend',
+      "safe_area" => 'safe_area edges: :all, padding: 12, background: "#07110d", width: 390, height: 844 do\n  column(spacing: 12) { label "Inside the device safe area" }\nend'
     }
     normalize(examples.fetch(slug))
   end
@@ -533,7 +557,111 @@ end',
       "settings" => 'settings({ theme: "dark", density: "comfortable" }, category: "appearance", file_name: "zui.conf", sync_revision: 1)',
       "standard_paths" => 'standard_paths :documents, locate_file: "reports/latest.pdf", refresh_revision: 1',
       "clipboard" => 'clipboard "Copied from Zui", watch: true, revision: 1',
-      "cursor_surface" => 'cursor_surface cursor: 1, current: 0, outline: true, bordered: true, foreground: "#f5f5f0", accent: "#b7ff5a" do\n  label "Keyboard-controlled surface"\nend'
+      "cursor_surface" => 'cursor_surface cursor: 1, current: 0, outline: true, bordered: true, foreground: "#f5f5f0", accent: "#b7ff5a" do\n  label "Keyboard-controlled surface"\nend',
+      "system_info" => 'system_info(refresh_revision: 1) { |info| puts "#{info.fetch("pretty_product_name")} on #{info.fetch("current_cpu_architecture")}" }',
+      "network_status" => 'network_status(watch: true, refresh_revision: 1) { |event| puts "Reachability: #{event.fetch("reachability")}" }',
+      "responsive_view" => 'responsive_view card_width: 348, spacing: 12, padding: 18, max_columns: 4 do\n  card(padding: 16) { label "Fits the viewport" }\n  card(padding: 16) { label "Reflows by card width" }\nend'
+    }
+    normalize(examples.fetch(slug))
+  end
+
+  # Mobile capabilities. Every permission type publishes the same change payload, every sensor the
+  # same reading payload with its own fields, so the examples differ only where the API does.
+  def permission(slug)
+    examples = {
+      "bluetooth_permission" => 'bluetooth_permission(communication_modes: :access, auto_request: true, request_revision: 1) { |event| puts "Bluetooth: #{event.fetch("status")}" }',
+      "calendar_permission" => 'calendar_permission(access_mode: :read_write, auto_request: true, request_revision: 1) { |event| puts "Calendar: #{event.fetch("status")}" }',
+      "camera_permission" => 'camera_permission(auto_request: true, request_revision: 1) { |event| puts "Camera: #{event.fetch("status")}" }',
+      "contacts_permission" => 'contacts_permission(access_mode: :read_only, auto_request: true, request_revision: 1) { |event| puts "Contacts: #{event.fetch("status")}" }',
+      "location_permission" => 'location_permission(availability: :when_in_use, accuracy: :precise, auto_request: true, request_revision: 1) { |event| puts "Location: #{event.fetch("status")}" }',
+      "microphone_permission" => 'microphone_permission(auto_request: true, request_revision: 1) { |event| puts "Microphone: #{event.fetch("status")}" }'
+    }
+    normalize(examples.fetch(slug))
+  end
+
+  def keyboard(slug)
+    examples = {
+      "virtual_keyboard" => 'virtual_keyboard(active: true, external_language_switch: false, width: 390) { |event| puts "Keyboard visible: #{event.fetch("value")}" }',
+      "handwriting_input" => 'panel = virtual_keyboard active: true\nhandwriting_input(panel, available: true, active: true) { |event| puts "Handwriting active: #{event.fetch("value")}" }',
+      "keyboard_context" => 'keyboard_context(command: :commit, text: "Zui", command_revision: 1, watch: true) { |event| puts "Input context: #{event}" }',
+      "keyboard_settings" => 'keyboard_settings(style: "default", locale: "en_GB", active_locales: %w[en_GB fr_FR], full_screen_mode: false, close_on_return: true, refresh_revision: 1) { |event| puts "Keyboard settings: #{event}" }',
+      "keyboard_text_field" => 'keyboard_text_field("", placeholder: "Search the catalog", enter_key: :search, enter_key_enabled: true, input_method_hints: %i[no_predictive_text sensitive_data]) { |value| puts "Query: #{value}" }'
+    }
+    normalize(examples.fetch(slug))
+  end
+
+  SENSOR_READINGS = {
+    "accelerometer" => %w[x y z],
+    "ambient_light_sensor" => %w[light_level],
+    "ambient_temperature_sensor" => %w[temperature],
+    "compass" => %w[azimuth calibration_level],
+    "gyroscope" => %w[x y z],
+    "humidity_sensor" => %w[relative_humidity absolute_humidity],
+    "ir_proximity_sensor" => %w[reflectance],
+    "lid_sensor" => %w[back_lid_closed front_lid_closed],
+    "light_sensor" => %w[illuminance],
+    "magnetometer" => %w[x y z calibration_level],
+    "orientation_sensor" => %w[orientation],
+    "pressure_sensor" => %w[pressure temperature],
+    "proximity_sensor" => %w[close],
+    "rotation_sensor" => %w[x y z],
+    "tap_sensor" => %w[tap_direction double_tap],
+    "tilt_sensor" => %w[x_rotation y_rotation]
+  }.freeze
+
+  def sensor(slug)
+    fields = SENSOR_READINGS.fetch(slug)
+    reading = fields.map { |field| "#{field}: \#{reading.fetch(\"#{field}\")}" }.join(" ")
+    normalize(
+      "#{slug}(active: true, data_rate: 30, skip_duplicates: true) " \
+      "{ |reading| puts \"#{reading}\" }"
+    )
+  end
+
+  def positioning(slug)
+    examples = {
+      "position_source" => 'position_source(active: true, update_interval: 1_000, preferred_methods: :all) { |position| puts "#{position.fetch("latitude")}, #{position.fetch("longitude")}" }',
+      "satellite_source" => 'satellite_source(active: true, update_interval: 5_000) { |event| puts "Satellites in view: #{event.fetch("satellites").length}" }'
+    }
+    normalize(examples.fetch(slug))
+  end
+
+  def map(slug)
+    examples = {
+      "map" => 'map plugin: "osm", latitude: 48.8584, longitude: 2.2945, zoom: 15, map_type: :street, width: 640, height: 420 do\n  map_marker(latitude: 48.8584, longitude: 2.2945) { icon :map_pin, size: 24, color: "#b7ff5a" }\nend',
+      "map_marker" => 'map_marker latitude: 48.8584, longitude: 2.2945, anchor_x: 12, anchor_y: 24, auto_fade_in: true do\n  icon :map_pin, size: 24, color: "#b7ff5a"\nend',
+      "map_circle" => 'map_circle latitude: 48.8584, longitude: 2.2945, radius: 400, color: "#403b82f6", border_color: "#3b82f6", border_width: 2',
+      "map_rectangle" => 'map_rectangle top_left: { latitude: 48.864, longitude: 2.288 }, bottom_right: { latitude: 48.853, longitude: 2.301 }, color: "#40b7ff5a", border_color: "#b7ff5a"',
+      "map_polygon" => 'map_polygon [{ latitude: 48.861, longitude: 2.289 }, { latitude: 48.861, longitude: 2.300 }, { latitude: 48.854, longitude: 2.295 }], color: "#4066e3ff", border_color: "#66e3ff", border_width: 2',
+      "map_polyline" => 'map_polyline [{ latitude: 48.8584, longitude: 2.2945 }, { latitude: 48.8606, longitude: 2.3376 }], color: "#b7ff5a", width: 4',
+      "map_route" => 'map_route [{ latitude: 48.8584, longitude: 2.2945 }, { latitude: 48.8738, longitude: 2.2950 }], color: "#a88bff", width: 6',
+      "map_item_group" => 'map_item_group do\n  map_circle latitude: 48.8584, longitude: 2.2945, radius: 200\n  map_circle latitude: 48.8606, longitude: 2.3376, radius: 200\nend',
+      "map_item_view" => 'map_item_view([{ label: "Depot", latitude: 48.8584, longitude: 2.2945 }, { label: "Site", latitude: 48.8606, longitude: 2.3376 }], label_field: :label, marker_color: "#b7ff5a") { |item| puts "Selected: #{item.fetch("label")}" }',
+      "map_copyright" => 'map_copyright(style_sheet: "* { color: #f5f5f0; }") { |event| puts "Attribution link: #{event.fetch("value")}" }',
+      "geo_json_data" => 'geo_json_data("assets/routes.geojson", command: :open, command_revision: 1) { |event| puts "GeoJSON items: #{event}" }',
+      "geocode_model" => 'geocode_model("Tour Eiffel, Paris", plugin: "osm", limit: 5, auto_update: true) { |event| puts "Matches: #{event}" }',
+      "route_model" => 'route_model([{ latitude: 48.8584, longitude: 2.2945 }, { latitude: 48.8738, longitude: 2.2950 }], plugin: "osm", travel_mode: :car, optimization: :fastest, auto_update: true) { |event| puts "Routes: #{event}" }',
+      "place_search" => 'place_search("coffee", plugin: "osm", limit: 10, relevance: :unspecified, incremental: false) { |event| puts "Places: #{event}" }',
+      "place_suggestions" => 'place_suggestions("cof", plugin: "osm", limit: 5) { |event| puts "Suggestions: #{event}" }',
+      "place_categories" => 'place_categories(plugin: "osm", hierarchical: true) { |event| puts "Categories: #{event}" }',
+      "place_details" => 'place_details("osm:node:123456", plugin: "osm", visibility: :public) { |event| puts "Place: #{event}" }',
+      "place_category" => 'place_category("restaurant", plugin: "osm", name: "Restaurants") { |event| puts "Category: #{event}" }'
+    }
+    normalize(examples.fetch(slug))
+  end
+
+  def speech(slug)
+    examples = {
+      "text_to_speech" => 'text_to_speech("Deployment finished", locale: "en_GB", volume: 0.9, rate: 0.1, pitch: 0.0, command: :say, command_revision: 1) { |event| puts "Speech state: #{event.fetch("value")}" }'
+    }
+    normalize(examples.fetch(slug))
+  end
+
+  def web(slug)
+    examples = {
+      "web_view" => 'web_view("https://zui.alkimist.dev", javascript: true, local_storage: true, width: 390, height: 640) { |event| puts "Load status: #{event.fetch("status")}" }',
+      "web_socket" => 'web_socket("wss://example.test/telemetry", active: true, message: "subscribe", command_revision: 1) { |event| puts "Message: #{event.fetch("value")}" }',
+      "web_socket_server" => 'web_socket_server(host: "127.0.0.1", port: 8_181, name: "zui-telemetry", listen: true, accept: true) { |event| puts "Client message: #{event.fetch("value")}" }'
     }
     normalize(examples.fetch(slug))
   end
