@@ -22,7 +22,14 @@ module ZuiExamples
       "Animation, state, and timing" => :motion,
       "Effects" => :effect,
       "Multimedia and capture" => :multimedia,
-      "Models and utilities" => :utility
+      "Models and utilities" => :utility,
+      "Mobile permissions" => :permission,
+      "Mobile sensors" => :sensor,
+      "Mobile positioning" => :positioning,
+      "Mobile maps" => :maps,
+      "Mobile speech" => :speech,
+      "Mobile web content" => :web,
+      "Mobile virtual keyboard" => :keyboard
     }.fetch(category, :utility)
   end
 
@@ -235,6 +242,18 @@ module ZuiExamples
       "vector_image" => 'vector_image "assets/architecture.svg", width: 520, height: 300, fill_mode: :preserve_aspect_fit',
       "model_view_3d" => 'model_view_3d "assets/engine.glb", width: 520, height: 420, interactive: true, auto_rotate: true',
       "font_loader" => 'font_loader "assets/fonts/Display.woff2"',
+      "lottie_animation" => 'lottie_animation "assets/loader.json", auto_play: true, loops: -1, direction: :forward, frame_rate: 60, width: 240, height: 240',
+      "pdf_view" => 'pdf_view "assets/report.pdf", page: 0, zoom: 1.0, width: 640, height: 720',
+      "pdf_document" => 'pdf_document "assets/report.pdf"',
+      "pdf_multi_page_view" => 'document = pdf_document "assets/report.pdf"\npdf_multi_page_view document_source: document, zoom: 1.0, width: 640, height: 720',
+      "pdf_page_view" => 'document = pdf_document "assets/report.pdf"\npdf_page_view document_source: document, page: 0, zoom_enabled: true, width: 640, height: 720',
+      "pdf_scrollable_page_view" => 'document = pdf_document "assets/report.pdf"\npdf_scrollable_page_view document_source: document, page: 0, rotation: 0, width: 640, height: 720',
+      "pdf_page_image" => 'document = pdf_document "assets/report.pdf"\npdf_page_image document_source: document, page: 0, source_width: 640, source_height: 880, width: 320, height: 440',
+      "pdf_page_navigator" => 'pdf_page_navigator page: 2, zoom: 1.5, command: :jump, command_revision: 1',
+      "pdf_search_model" => 'document = pdf_document "assets/report.pdf"\npdf_search_model document_source: document, search: "revenue", current_page: 0',
+      "pdf_selection" => 'document = pdf_document "assets/report.pdf"\npdf_selection document_source: document, page: 0, command: :select_all, command_revision: 1',
+      "pdf_link_model" => 'document = pdf_document "assets/report.pdf"\npdf_link_model document_source: document, page: 0',
+      "pdf_bookmark_model" => 'document = pdf_document "assets/report.pdf"\npdf_bookmark_model document_source: document, parent_path: []',
       "text_metrics" => 'text_metrics "Native Ruby UI", font_family: "Roboto Mono", font_size: 18, bold: true'
     }.fetch(slug).then { |example| normalize(example) }
   end
@@ -463,6 +482,95 @@ end',
         end
       RUBY
       "property_animation" => target_animation("property_animation", "property: :scale, from: 0.85, to: 1.0"),
+      "property_binding" => <<~RUBY.chomp,
+        zoom = slider 1.0, id: :zoom, minimum: 0.5, maximum: 2.0, step: 0.1
+        preview = rectangle id: :preview, width: 120, height: 120, color: "#b7ff5a"
+
+        property_binding preview,
+          property: :scale,
+          source: zoom,
+          source_property: :value,
+          when: true,
+          restore_mode: :binding_or_value
+      RUBY
+      "state_machine" => <<~RUBY.chomp,
+        machine = state_machine running: true, event: :start, event_revision: 1 do
+          machine_state :idle, initial: true do
+            signal_transition on: :start, target: :running
+          end
+
+          machine_state :running do
+            signal_transition on: :stop, target: :idle
+            timeout_transition timeout: 5_000, target: :done
+          end
+
+          final_state :done
+        end
+
+        on machine, :change do |payload|
+          puts payload.fetch("active").inspect
+        end
+      RUBY
+      "machine_state" => <<~RUBY.chomp,
+        state_machine running: true do
+          machine_state :loading, initial: true do
+            signal_transition on: :ready, target: :ready
+          end
+
+          machine_state :ready, child_mode: :exclusive do
+            machine_state :summary, initial: true do
+              signal_transition on: :expand, target: :detail
+            end
+            machine_state :detail
+          end
+        end
+      RUBY
+      "final_state" => <<~RUBY.chomp,
+        state_machine running: true do
+          machine_state :working, initial: true do
+            signal_transition on: :finish, target: :complete
+          end
+
+          final_state :complete
+        end
+      RUBY
+      "history_state" => <<~RUBY.chomp,
+        state_machine running: true, initial: :work do
+          machine_state :work, initial: :step_one do
+            machine_state :step_one do
+              signal_transition on: :next, target: :step_two
+            end
+            machine_state :step_two
+
+            history_state :work_history, history_type: :shallow, default_state: :step_one
+            signal_transition on: :pause, target: :paused
+          end
+
+          machine_state :paused do
+            signal_transition on: :resume, target: :work_history
+          end
+        end
+      RUBY
+      "signal_transition" => <<~RUBY.chomp,
+        state_machine running: true, event: :submit, event_revision: 1 do
+          machine_state :editing, initial: true do
+            signal_transition on: :submit, target: :saving
+          end
+
+          machine_state :saving do
+            signal_transition on: :saved, target: :editing
+          end
+        end
+      RUBY
+      "timeout_transition" => <<~RUBY.chomp,
+        state_machine running: true do
+          machine_state :visible, initial: true do
+            timeout_transition timeout: 3_000, target: :hidden
+          end
+
+          machine_state :hidden
+        end
+      RUBY
       "pause_animation" => 'pause_animation 450, running: true',
       "script_action" => 'script_action :mark_ready, trigger: true, revision: 1',
       "property_action" => 'tile = rectangle width: 120, height: 80, opacity: 0.4\nproperty_action tile, property: :opacity, value: 1.0, revision: 1',
@@ -518,7 +626,8 @@ end',
       "audio_output" => 'audio_output device: :default, muted: false, volume: 0.7',
       "media_devices" => 'media_devices kind: :all, refresh_revision: 1',
       "screen_capture" => 'screen_capture active: true, screen: 0, command: :start, command_revision: 1',
-      "window_capture" => 'window_capture active: true, window: "app.main", command: :start, command_revision: 1'
+      "window_capture" => 'window_capture active: true, window: "app.main", command: :start, command_revision: 1',
+      "video_sink" => 'player = media_player "assets/sequence.mp4", auto_play: true\nvideo_sink player'
     }
     normalize(examples.fetch(slug))
   end
@@ -532,8 +641,174 @@ end',
       "folder_list_model" => 'folder_list_model "file:///home/user/Documents", name_filters: ["*.rb", "*.md"], show_files: true, show_dirs: true, sort_field: :name',
       "settings" => 'settings({ theme: "dark", density: "comfortable" }, category: "appearance", file_name: "zui.conf", sync_revision: 1)',
       "standard_paths" => 'standard_paths :documents, locate_file: "reports/latest.pdf", refresh_revision: 1',
+      "object_model" => <<~RUBY.chomp,
+        object_model revision: 1 do
+          card padding: 12 do
+            label "Overview"
+          end
+          card padding: 12 do
+            label "Details"
+          end
+        end
+      RUBY
+      "instantiator" => <<~RUBY.chomp,
+        instantiator active: true, asynchronous: true do
+          card padding: 12 do
+            label "Created on demand"
+          end
+        end
+      RUBY
+      "item_selection_model" => <<~RUBY.chomp,
+        selection = item_selection_model [
+          { id: "ruby", name: "Ruby" },
+          { id: "qt", name: "Qt" },
+          { id: "qml", name: "QML" }
+        ], key_field: :id, selected: %w[qt qml], current_index: 1, revision: 1
+
+        on selection, :selection_change do |payload|
+          puts payload.fetch("values").inspect
+        end
+      RUBY
+      "xml_list_model" => <<~RUBY.chomp,
+        feed = xml_list_model "https://example.com/feed.xml",
+          query: "/rss/channel/item", reload_revision: 1 do
+          xml_list_model_role "title", element_name: "title"
+          xml_list_model_role "link", element_name: "link"
+        end
+
+        on feed, :loaded do |payload|
+          puts payload.fetch("values").length
+        end
+      RUBY
+      "xml_list_model_role" => <<~RUBY.chomp,
+        xml_list_model "https://example.com/feed.xml", query: "/rss/channel/item" do
+          xml_list_model_role "title", element_name: "title"
+          xml_list_model_role "guid", attribute_name: "guid"
+        end
+      RUBY
+      "table_model" => <<~RUBY.chomp,
+        table_model [
+          { name: "Ada", role: "Engineer", note: "Founder" },
+          { name: "Grace", role: "Rear Admiral", note: "Compiler" }
+        ], columns: ["name", { display: "role", edit: "role", tool_tip: "note" }], revision: 1
+      RUBY
+      "table_model_column" => <<~RUBY.chomp,
+        table_model [{ name: "Ada", note: "Founder" }], revision: 1 do
+          table_model_column "name", edit: "name"
+          table_model_column "note", tool_tip: "note"
+        end
+      RUBY
+      "locale" => <<~RUBY.chomp,
+        locale "fr_FR",
+          number: 1_234_567.891,
+          currency: 1234.5,
+          date: "2026-11-16",
+          data_size: 1_536_000,
+          precision: 2,
+          refresh_revision: 1 do |payload|
+          puts payload.fetch("currency_symbol")
+        end
+      RUBY
       "clipboard" => 'clipboard "Copied from Zui", watch: true, revision: 1',
       "cursor_surface" => 'cursor_surface cursor: 1, current: 0, outline: true, bordered: true, foreground: "#f5f5f0", accent: "#b7ff5a" do\n  label "Keyboard-controlled surface"\nend'
+    }
+    normalize(examples.fetch(slug))
+  end
+
+  def permission(slug)
+    examples = {
+      "bluetooth_permission" => 'bluetooth_permission communication_modes: [:access], auto_request: true, request_revision: 1',
+      "calendar_permission" => 'calendar_permission access_mode: :read_only, auto_request: true, request_revision: 1',
+      "camera_permission" => 'camera_permission auto_request: true, request_revision: 1',
+      "contacts_permission" => 'contacts_permission access_mode: :read_only, auto_request: true, request_revision: 1',
+      "location_permission" => 'location_permission availability: :when_in_use, accuracy: :precise, auto_request: true, request_revision: 1',
+      "microphone_permission" => 'microphone_permission auto_request: true, request_revision: 1'
+    }
+    normalize(examples.fetch(slug))
+  end
+
+  def sensor(slug)
+    examples = {
+      "accelerometer" => 'accelerometer active: true, data_rate: 50 do |reading|\n  puts reading\nend',
+      "ambient_light_sensor" => 'ambient_light_sensor active: true do |reading|\n  puts reading\nend',
+      "ambient_temperature_sensor" => 'ambient_temperature_sensor active: true do |reading|\n  puts reading\nend',
+      "compass" => 'compass active: true, data_rate: 10 do |reading|\n  puts reading\nend',
+      "gyroscope" => 'gyroscope active: true, data_rate: 50 do |reading|\n  puts reading\nend',
+      "humidity_sensor" => 'humidity_sensor active: true do |reading|\n  puts reading\nend',
+      "ir_proximity_sensor" => 'ir_proximity_sensor active: true do |reading|\n  puts reading\nend',
+      "lid_sensor" => 'lid_sensor active: true do |reading|\n  puts reading\nend',
+      "light_sensor" => 'light_sensor active: true do |reading|\n  puts reading\nend',
+      "magnetometer" => 'magnetometer active: true, data_rate: 20 do |reading|\n  puts reading\nend',
+      "orientation_sensor" => 'orientation_sensor active: true do |reading|\n  puts reading\nend',
+      "pressure_sensor" => 'pressure_sensor active: true do |reading|\n  puts reading\nend',
+      "proximity_sensor" => 'proximity_sensor active: true do |reading|\n  puts reading\nend',
+      "rotation_sensor" => 'rotation_sensor active: true, data_rate: 30 do |reading|\n  puts reading\nend',
+      "tap_sensor" => 'tap_sensor active: true, return_double_tap_events: true do |reading|\n  puts reading\nend',
+      "tilt_sensor" => 'tilt_sensor active: true do |reading|\n  puts reading\nend',
+      "sensor_manager" => 'sensor_manager watch: true, refresh_revision: 1'
+    }
+    normalize(examples.fetch(slug))
+  end
+
+  def positioning(slug)
+    examples = {
+      "position_source" => 'position_source active: true, update_interval: 1000, preferred_methods: :all',
+      "satellite_source" => 'satellite_source active: true, update_interval: 1000',
+      "geo_address" => 'geo_address street: "Rue de Rivoli", street_number: "1", postal_code: "75001", city: "Paris", country: "France"',
+      "geo_location" => 'geo_location latitude: 48.8606, longitude: 2.3376, city: "Paris", country: "France", bounding_width: 0.02, bounding_height: 0.02',
+      "coordinate_animation" => 'target = map plugin: "osm", latitude: 48.8606, longitude: 2.3376, zoom: 12\ncoordinate_animation target, property: "center", from_latitude: 48.8606, from_longitude: 2.3376, to_latitude: 51.5072, to_longitude: -0.1276, direction: :shortest, duration: 1200, running: true'
+    }
+    normalize(examples.fetch(slug))
+  end
+
+  def maps(slug)
+    examples = {
+      "map" => 'map plugin: "osm", latitude: 48.8606, longitude: 2.3376, zoom: 13, width: 640, height: 420 do\n  map_circle latitude: 48.8606, longitude: 2.3376, radius: 400, color: "#3b82f6"\nend',
+      "map_plugin" => 'map_plugin name: "osm", plugin_parameters: { "osm.useragent" => "Zui Docs" }, required_mapping: [:online], required_places: [:search_suggestions]',
+      "map_circle" => 'map_circle latitude: 48.8606, longitude: 2.3376, radius: 250, color: "#3b82f6", border_color: "#1d4ed8", border_width: 2',
+      "map_rectangle" => 'map_rectangle top_left: [48.87, 2.33], bottom_right: [48.85, 2.35], color: "#22c55e", border_width: 1',
+      "map_polygon" => 'map_polygon [[48.87, 2.33], [48.86, 2.36], [48.85, 2.33]], color: "#f9731650", border_color: "#f97316"',
+      "map_polyline" => 'map_polyline [[48.8606, 2.3376], [48.8738, 2.2950]], color: "#ef4444", width: 4',
+      "map_route" => 'map_route [[48.8606, 2.3376], [48.8738, 2.2950]], color: "#6366f1", width: 5',
+      "map_marker" => 'map_marker latitude: 48.8606, longitude: 2.3376, anchor_x: 12, anchor_y: 24, width: 24, height: 24',
+      "map_item_group" => 'map_item_group do\n  map_circle latitude: 48.8606, longitude: 2.3376, radius: 200, color: "#3b82f6"\n  map_marker latitude: 48.8738, longitude: 2.2950\nend',
+      "map_item_view" => 'map_item_view [{ latitude: 48.8606, longitude: 2.3376, label: "Louvre" }, { latitude: 48.8584, longitude: 2.2945, label: "Eiffel Tower" }], latitude_field: :latitude, longitude_field: :longitude, label_field: :label',
+      "map_copyright" => 'map_copyright width: 320, height: 24',
+      "geo_json_data" => 'geo_json_data "assets/districts.geojson"',
+      "geocode_model" => 'geocode_model "1 Rue de Rivoli, Paris", plugin: "osm", limit: 5, auto_update: true',
+      "route_model" => 'route_model [[48.8606, 2.3376], [48.8738, 2.2950]], plugin: "osm", travel_mode: :car, optimization: :fastest, auto_update: true',
+      "place_search" => 'place_search "coffee", plugin: "osm", search_area: { latitude: 48.8606, longitude: 2.3376, radius: 1500 }, limit: 20',
+      "place_suggestions" => 'place_suggestions "cof", plugin: "osm", limit: 10',
+      "place_categories" => 'place_categories plugin: "osm", hierarchical: true',
+      "place_details" => 'place_details "osm:node:12345", plugin: "osm"',
+      "place_category" => 'place_category "restaurant", plugin: "osm"'
+    }
+    normalize(examples.fetch(slug))
+  end
+
+  def speech(slug)
+    examples = {
+      "text_to_speech" => 'text_to_speech "Native speech from Ruby", volume: 1.0, rate: 0.1, pitch: 0.0, voice_gender: :female, command: :say, command_revision: 1'
+    }
+    normalize(examples.fetch(slug))
+  end
+
+  def web(slug)
+    examples = {
+      "web_view" => 'web_view "https://example.org", javascript: true, local_storage: true, width: 800, height: 600',
+      "web_socket" => 'web_socket "wss://example.org/socket", active: true',
+      "web_socket_server" => 'web_socket_server listen: true, port: 8765, host: "127.0.0.1"'
+    }
+    normalize(examples.fetch(slug))
+  end
+
+  def keyboard(slug)
+    examples = {
+      "virtual_keyboard" => 'virtual_keyboard active: true, external_language_switch: false',
+      "handwriting_input" => 'panel = virtual_keyboard active: true\nhandwriting_input panel, available: true, active: true, width: 480, height: 240',
+      "keyboard_context" => 'keyboard_context command: :commit, text: "zui", watch: true, command_revision: 1',
+      "keyboard_settings" => 'keyboard_settings locale: "en_GB", active_locales: ["en_GB", "fr_FR"], full_screen_mode: false, close_on_return: true, refresh_revision: 1',
+      "keyboard_text_field" => 'keyboard_text_field "", placeholder: "Search", enter_key: :search, input_method_hints: [:no_predictive_text]'
     }
     normalize(examples.fetch(slug))
   end
