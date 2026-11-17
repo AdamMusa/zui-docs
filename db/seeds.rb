@@ -349,6 +349,134 @@ Zui.app do
 end
 </code></pre>
     HTML
+  },
+  {
+    position: 6,
+    slug: "qt-modules-on-mobile",
+    title: "Qt modules on mobile",
+    summary: "Which Qt QML modules reach iOS and Android, what each one needs, and how Qt type names map to Zui components.",
+    body: <<~HTML
+      <h2>Components are Qt modules underneath</h2>
+      <p>Every Zui component renders through a Qt QML type, and those types live in Qt modules that a mobile application has to carry. Zui works that out from your code: the tree shaker keeps only the component adapters your application references, the surviving QML is compiled into the application resource, and the Qt modules those adapters import are linked for the target. Nothing lists its Qt modules by hand.</p>
+      <p>The consequence is worth knowing: if an application never uses <code>map</code>, no Qt Location library is in the binary at all. If it does, the module, its plugins and its Android permissions arrive with it.</p>
+      <pre data-language="bash"><code class="language-bash">zui mobile --enable
+zui mobile --fix
+zui build ios
+zui build android
+zui install ios</code></pre>
+      <h2>What reaches iOS and Android</h2>
+      <p>Of the 76 public Qt QML modules in Qt 6.8.3, 28 are reachable today because a shipped adapter imports them. Both mobile SDKs carry all of them except Qt PDF.</p>
+      <table>
+        <thead><tr><th>Qt module</th><th>iOS</th><th>Android</th><th>SDK add-on</th><th>Android permissions it brings</th></tr></thead>
+        <tbody>
+          <tr><td><code>QtQuick</code>, <code>QtQuick.Controls</code>, <code>QtQuick.Layouts</code>, <code>QtQuick.Window</code>, <code>QtQuick.Dialogs</code></td><td>yes</td><td>yes</td><td>base</td><td>—</td></tr>
+          <tr><td><code>QtQuick.Effects</code>, <code>QtQuick.Shapes</code>, <code>QtQuick.Particles</code>, <code>QtQuick.VectorImage</code></td><td>yes</td><td>yes</td><td>base</td><td>—</td></tr>
+          <tr><td><code>QtCore</code>, <code>QtNetwork</code>, <code>QtQml.Models</code>, <code>Qt.labs.qmlmodels</code>, <code>Qt.labs.folderlistmodel</code></td><td>yes</td><td>yes</td><td>base</td><td>—</td></tr>
+          <tr><td><code>QtQuick3D</code>, <code>QtQuick3D.AssetUtils</code></td><td>yes</td><td>yes</td><td><code>qtquick3d</code></td><td>—</td></tr>
+          <tr><td><code>QtMultimedia</code></td><td>yes</td><td>yes</td><td><code>qtmultimedia</code></td><td><code>CAMERA</code>, <code>RECORD_AUDIO</code>, <code>MODIFY_AUDIO_SETTINGS</code>, <code>BLUETOOTH</code></td></tr>
+          <tr><td><code>QtPositioning</code></td><td>yes</td><td>yes</td><td><code>qtpositioning</code></td><td><code>ACCESS_FINE_LOCATION</code></td></tr>
+          <tr><td><code>QtLocation</code></td><td>yes</td><td>yes</td><td><code>qtlocation</code></td><td><code>ACCESS_FINE_LOCATION</code></td></tr>
+          <tr><td><code>QtSensors</code></td><td>yes</td><td>yes</td><td><code>qtsensors</code></td><td>—</td></tr>
+          <tr><td><code>QtTextToSpeech</code></td><td>yes</td><td>yes</td><td><code>qtspeech</code></td><td><code>MODIFY_AUDIO_SETTINGS</code>, <code>RECORD_AUDIO</code></td></tr>
+          <tr><td><code>QtWebView</code></td><td>yes</td><td>yes</td><td><code>qtwebview</code></td><td><code>ACCESS_FINE_LOCATION</code></td></tr>
+          <tr><td><code>QtWebSockets</code></td><td>yes</td><td>yes</td><td><code>qtwebsockets</code></td><td>—</td></tr>
+          <tr><td><code>QtQuick.VirtualKeyboard</code>, <code>QtQuick.VirtualKeyboard.Settings</code></td><td>yes</td><td>yes</td><td><code>qtvirtualkeyboard</code></td><td>—</td></tr>
+          <tr><td><code>Qt.labs.lottieqt</code></td><td>yes</td><td>yes</td><td><code>qtlottie</code></td><td>—</td></tr>
+          <tr><td><code>QtQuick.Pdf</code></td><td>yes</td><td><strong>no</strong></td><td><code>qtpdf</code></td><td>—</td></tr>
+        </tbody>
+      </table>
+      <p>The permission column lists what Qt itself adds to the Android manifest when the module ships, taken from the module's own dependency description. Your application still declares the runtime permissions it asks the user for.</p>
+      <blockquote>Qt 6.8.3 ships no Android build of Qt PDF, so <code>pdf_view</code> is an iOS-only capability. An Android build that keeps a PDF adapter now fails while configuring, with that reason, instead of installing an application whose PDF screen cannot load.</blockquote>
+      <h2>Permissions the application declares</h2>
+      <p>Zui exposes each protected capability as a component with a status, so permission handling stays in Ruby. Declaring the capability is still platform work: an Android permission in <code>android/AndroidManifest.xml</code> and an iOS usage description in <code>ios/Info.plist.in</code>, both created for you by <code>zui mobile --enable</code>.</p>
+      <table>
+        <thead><tr><th>Component</th><th>Android permission</th><th>iOS usage description</th></tr></thead>
+        <tbody>
+          <tr><td><code>camera_permission</code></td><td><code>CAMERA</code></td><td><code>NSCameraUsageDescription</code></td></tr>
+          <tr><td><code>microphone_permission</code></td><td><code>RECORD_AUDIO</code></td><td><code>NSMicrophoneUsageDescription</code></td></tr>
+          <tr><td><code>location_permission</code></td><td><code>ACCESS_FINE_LOCATION</code>, <code>ACCESS_COARSE_LOCATION</code></td><td><code>NSLocationWhenInUseUsageDescription</code></td></tr>
+          <tr><td><code>contacts_permission</code></td><td><code>READ_CONTACTS</code>, <code>WRITE_CONTACTS</code></td><td><code>NSContactsUsageDescription</code></td></tr>
+          <tr><td><code>calendar_permission</code></td><td><code>READ_CALENDAR</code>, <code>WRITE_CALENDAR</code></td><td><code>NSCalendarsUsageDescription</code></td></tr>
+          <tr><td><code>bluetooth_permission</code></td><td><code>BLUETOOTH_SCAN</code>, <code>BLUETOOTH_CONNECT</code>, <code>BLUETOOTH_ADVERTISE</code></td><td><code>NSBluetoothAlwaysUsageDescription</code></td></tr>
+        </tbody>
+      </table>
+      <pre data-language="ruby"><code class="language-ruby">require "zui"
+
+Zui.app do
+  state :status, "Waiting for location access"
+  state :heading, 0.0
+
+  app :main, title: "Field survey", width: 390, height: 844 do
+    safe_area edges: :all, padding: 16 do
+      column spacing: 16 do
+        label { state.status }
+
+        location_permission(availability: :when_in_use, accuracy: :precise, auto_request: true) do |event|
+          state.status = "Location: \#{event.fetch("status")}"
+        end
+
+        compass(active: true, data_rate: 10) do |reading|
+          state.heading = reading.fetch("azimuth")
+        end
+
+        text { "Heading: \#{state.heading.round} degrees" }
+
+        position_source(active: true, update_interval: 2_000) do |position|
+          state.status = "\#{position.fetch("latitude").round(4)}, \#{position.fetch("longitude").round(4)}"
+        end
+      end
+    end
+  end
+end</code></pre>
+      <h2>Qt names and Zui names</h2>
+      <p>Zui names components for the Ruby API rather than copying Qt, so a search for <code>combo_box</code> finds nothing while <code>dropdown</code> is the component that renders Qt's <code>ComboBox</code>. These are the renamed types in the mobile catalog.</p>
+      <table>
+        <thead><tr><th>Qt type</th><th>Zui component</th><th>Qt type</th><th>Zui component</th></tr></thead>
+        <tbody>
+          <tr><td><code>ComboBox</code></td><td><code>dropdown</code></td><td><code>Switch</code></td><td><code>toggle_switch</code></td></tr>
+          <tr><td><code>ProgressBar</code></td><td><code>progress</code></td><td><code>ScrollView</code></td><td><code>scroll</code></td></tr>
+          <tr><td><code>ToolTip</code></td><td><code>tooltip</code></td><td><code>CheckBox</code></td><td><code>checkbox</code></td></tr>
+          <tr><td><code>FileDialog</code></td><td><code>file_picker</code></td><td><code>FolderDialog</code></td><td><code>folder_picker</code></td></tr>
+          <tr><td><code>ColorDialog</code></td><td><code>color_picker</code></td><td><code>FontDialog</code></td><td><code>font_picker</code></td></tr>
+          <tr><td><code>HorizontalHeaderView</code></td><td><code>horizontal_header</code></td><td><code>VerticalHeaderView</code></td><td><code>vertical_header</code></td></tr>
+          <tr><td><code>TapHandler</code></td><td><code>tap_area</code></td><td><code>HoverHandler</code></td><td><code>hover_area</code></td></tr>
+          <tr><td><code>DragHandler</code></td><td><code>drag_area</code></td><td><code>PinchHandler</code></td><td><code>pinch_area</code></td></tr>
+          <tr><td><code>WheelHandler</code></td><td><code>wheel_area</code></td><td><code>MultiPointTouchArea</code></td><td><code>multi_touch_area</code></td></tr>
+          <tr><td><code>InputPanel</code></td><td><code>virtual_keyboard</code></td><td><code>HandwritingInputPanel</code></td><td><code>handwriting_input</code></td></tr>
+          <tr><td><code>InputContext</code></td><td><code>keyboard_context</code></td><td><code>VirtualKeyboardSettings</code></td><td><code>keyboard_settings</code></td></tr>
+          <tr><td><code>EnterKeyAction</code></td><td><code>keyboard_text_field</code></td><td><code>SystemInformation</code></td><td><code>system_info</code></td></tr>
+          <tr><td><code>NetworkInformation</code></td><td><code>network_status</code></td><td><code>VoiceSelector</code></td><td><code>text_to_speech</code></td></tr>
+          <tr><td><code>Map</code>, <code>MapView</code>, <code>Plugin</code>, <code>PluginParameter</code></td><td><code>map</code></td><td><code>MapQuickItem</code></td><td><code>map_marker</code></td></tr>
+          <tr><td><code>MapCopyrightNotice</code></td><td><code>map_copyright</code></td><td><code>RouteQuery</code></td><td><code>route_model</code></td></tr>
+          <tr><td><code>PlaceSearchModel</code></td><td><code>place_search</code></td><td><code>PlaceSearchSuggestionModel</code></td><td><code>place_suggestions</code></td></tr>
+          <tr><td><code>CategoryModel</code></td><td><code>place_categories</code></td><td><code>Category</code></td><td><code>place_category</code></td></tr>
+          <tr><td><code>Place</code></td><td><code>place_details</code></td><td>the eight <code>Pdf*</code> types</td><td><code>pdf_view</code></td></tr>
+        </tbody>
+      </table>
+      <p>One Zui component often renders several Qt types: <code>pdf_view</code> covers <code>PdfDocument</code>, <code>PdfMultiPageView</code>, <code>PdfPageView</code>, <code>PdfScrollablePageView</code>, <code>PdfPageImage</code>, <code>PdfPageNavigator</code>, <code>PdfSearchModel</code> and <code>PdfSelection</code> behind one Ruby API.</p>
+      <h2>Modules nothing imports yet</h2>
+      <p>Forty-one further modules ship in both mobile SDKs with no adapter importing them, among them <code>QtCharts</code>, <code>QtGraphs</code>, <code>QtQuick.Timeline</code>, <code>Qt5Compat.GraphicalEffects</code>, <code>QtQml.XmlListModel</code>, <code>QtQuick.LocalStorage</code>, <code>QtScxml</code> and the <code>QtQuick3D</code> submodules. Nothing in the build is missing for them: an adapter that imports one is linked, deployed and permissioned like any other. Zui's charts are drawn with Qt Quick Shapes rather than Qt Charts, which is why that module is unused rather than unavailable.</p>
+      <pre data-language="ruby"><code class="language-ruby">require "zui"
+
+Zui.app do
+  app :main, title: "Logistics", width: 390, height: 844 do
+    column spacing: 0 do
+      map plugin: "osm", latitude: 48.8584, longitude: 2.2945, zoom: 14, width: 390, height: 520 do
+        map_marker(latitude: 48.8584, longitude: 2.2945) { icon :map_pin, size: 24 }
+        map_polyline [{ latitude: 48.8584, longitude: 2.2945 }, { latitude: 48.8738, longitude: 2.2950 }],
+          color: "#b7ff5a", width: 4
+      end
+
+      card padding: 16, spacing: 8 do
+        label "Route briefing", bold: true
+        text_to_speech "Two stops remaining on this route", locale: "en_GB", volume: 0.9
+      end
+    end
+  end
+end</code></pre>
+      <h2>Where the detail lives</h2>
+      <p>The framework repository carries the generated reference for all of this: <code>docs/qt-coverage.md</code> lists every Qt module, every type in it and the Zui component that renders it, <code>docs/qt-mobile-modules.md</code> explains how a module reaches a device, and <code>native/qt-modules.json</code> is the registry the build itself reads.</p>
+    HTML
   }
 ]
 
