@@ -69,7 +69,26 @@ DESCRIPTIONS = {
   "timer" => "A declarative native timer for one-shot or repeating triggers.",
   "toast" => "A short-lived non-modal feedback message with placement, duration, severity, and dismissal.",
   "toggle" => "A descriptive boolean setting row with label, supporting copy, and change events.",
-  "video" => "A convenient native video player surface with looping, orientation, mirroring, and transport events."
+  "video" => "A convenient native video player surface with looping, orientation, mirroring, and transport events.",
+
+  # Models: QtQml.Models, QtQml.XmlListModel, Qt.labs.qmlmodels.
+  "object_model" => "Holds a container's declared child controls as a model, so a view can present a fixed, heterogeneous set of controls.",
+  "instantiator" => "Creates a container's children on demand, optionally asynchronously, reporting each object as it appears and leaves.",
+  "item_selection_model" => "Tracks which rows of a model are selected and which row is current, applying the selection Ruby declares and reporting what changes.",
+  "xml_list_model" => "Fetches an XML document and exposes the elements matched by an XPath query as rows keyed by role, with load status and progress.",
+  "xml_list_model_role" => "Maps one role of an xml_list_model row to an element or an attribute of the matched XML node.",
+  "table_model" => "A native table model built from Ruby rows and declared columns, carrying Qt's full column role surface.",
+  "table_model_column" => "Declares one table_model column and which row key supplies each of its Qt roles, from display to check state.",
+  "locale" => "Answers locale questions from Qt's CLDR data and formats numbers, currency, dates, times, and data sizes for a named or system locale.",
+
+  # Bindings and the hierarchical state machine: QtQml, QtQml.StateMachine.
+  "property_binding" => "A live declarative link that keeps one control's property following another's, gated by a condition and restored when it lapses.",
+  "state_machine" => "A hierarchical state machine with nested and parallel regions, history and timed transitions, driven by named events from Ruby.",
+  "machine_state" => "One state of a state_machine, which may nest its own child states and transitions and reports its own entry and exit.",
+  "final_state" => "A terminal state that finishes its enclosing state_machine when it is entered.",
+  "history_state" => "A pseudo-state that returns a compound state to the child it last occupied, either shallowly or deeply.",
+  "signal_transition" => "Moves a state_machine out of its enclosing state when Ruby fires the event it listens for.",
+  "timeout_transition" => "Moves a state_machine out of its enclosing state once that state has been active for a set time."
 }.freeze
 
 def title_for(slug)
