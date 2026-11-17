@@ -191,6 +191,21 @@ module ZuiExamples
           column(spacing: 12) { label "Detached native window" }
         end
       RUBY
+    when "control"
+      <<~'RUBY'
+        # control is the Qt Quick Controls base type: padding, focus, hover and
+        # a background, with no style of its own. Build a custom control on it.
+        surface = control width: 320, height: 96,
+          padding: 16, hover_enabled: true,
+          background: "#141a0c", border_color: "#2c3a18",
+          border_width: 1, radius: 12, clip: true, focus: true do
+          row(spacing: 12) { icon :gear; label "Custom control" }
+        end
+
+        on surface, :hover do
+          puts "Pointer entered the control"
+        end
+      RUBY
     when "application_window"
       <<~RUBY
         application_window "Zui Studio",
@@ -242,6 +257,23 @@ module ZuiExamples
   def input(slug)
     examples = {
       "button" => 'button("Deploy", icon: :play, accent: "#b7ff5a") { puts "Deploy requested" }',
+      "abstract_button" => <<~'RUBY'.chomp,
+        # abstract_button is the unstyled base every Zui button is built on. It
+        # contributes behaviour, not appearance: checked state, auto-exclusive
+        # grouping and key auto-repeat.
+        hold = abstract_button text: "Hold to rewind",
+          checkable: true, checked: false,
+          auto_repeat: true, auto_repeat_delay: 300, auto_repeat_interval: 80,
+          width: 220, height: 44, padding: 12,
+          background: "#141a0c", foreground: "#b7ff5a",
+          border_color: "#2c3a18", radius: 10 do
+          icon :arrow_left
+        end
+
+        on hold, :change do |event|
+          puts "Checked: #{event.fetch("value")}"
+        end
+      RUBY
       "action_button" => 'action_button(:refresh, tooltip: "Refresh data") { puts "Refresh requested" }',
       "bar_icon_button" => 'bar_icon_button(:bell, tooltip: "Notifications", active: true) { puts "Notifications opened" }',
       "bar_indicator" => 'bar_indicator :wifi, inactive_icon: :warning, active: true, active_tooltip: "Connected"',
@@ -320,6 +352,7 @@ module ZuiExamples
       "menu_item" => 'menu_item("Duplicate", value: :duplicate, icon: :copy, shortcut: "Ctrl+D") { puts "Duplicate selected" }',
       "menu_separator" => 'menu_separator visible: true',
       "menu_bar" => 'menu_bar [{ title: "File", items: [{ text: "New", value: :new }, { text: "Quit", value: :quit }] }]',
+      "menu_bar_item" => 'menu_bar_item("File", highlighted: true, padding: 10, font_size: 13) { puts "File menu opened" }',
       "context_menu" => 'context_menu [{ text: "Copy", value: :copy }, { text: "Delete", value: :delete }], x: 120, y: 80, opened: true',
       "popup" => 'popup opened: true, x: 40, y: 40, padding: 16 do\n  label "Quick actions"\nend',
       "dialog" => 'dialog "Create project", opened: true, width: 460 do\n  text_field "", placeholder: "Project name"\nend',
@@ -339,6 +372,15 @@ module ZuiExamples
 
   def collection(slug)
     examples = {
+      "calendar_model" => <<~'RUBY'.chomp,
+        # calendar_model has no visual form: it is the month range that a
+        # month_grid renders. It reports how many months the range covers.
+        months = calendar_model from: "2026-01-01", to: "2026-12-31"
+
+        on months, :change do |event|
+          puts "Months in range: #{event.fetch("count")}"
+        end
+      RUBY
       "item_delegate" => 'item_delegate("Build #184", value: 184, description: "Passed · 42s", icon: :circle_check) { |value| puts "Build: #{value}" }',
       "check_delegate" => 'check_delegate "Run tests", value: :tests, checked: true, description: "Required before deploy"',
       "radio_delegate" => 'radio_delegate "Production", value: :production, checked: true, description: "Deploy to customers"',
@@ -435,6 +477,70 @@ end',
       "pinch_area" => 'pinch_area minimum_scale: 0.5, maximum_scale: 4.0, width: 520, height: 360 do\n  image "assets/map.png", width: 520, height: 360\nend',
       "hover_area" => 'hover_area cursor: :pointing_hand, width: 320, height: 120 do\n  card { label "Hover for details" }
 end',
+      "tap_area" => <<~'RUBY'.chomp,
+        taps = tap_area accepted_buttons: %i[left right],
+          gesture_policy: :within_bounds,
+          long_press_threshold: 0.6,
+          width: 320, height: 160 do
+          card { label "Tap, double-tap or long-press" }
+        end
+
+        on taps, :tap do |event|
+          puts "Tapped with button #{event.fetch("button")}"
+        end
+
+        on taps, :long_press do
+          puts "Long press"
+        end
+      RUBY
+      "wheel_area" => <<~'RUBY'.chomp,
+        wheel = wheel_area accepted_devices: %i[mouse touch_pad],
+          blocking: true,
+          width: 420, height: 280 do
+          image "assets/map.png", width: 420, height: 280
+        end
+
+        on wheel, :wheel do |event|
+          puts "Scrolled #{event.fetch("angle_y")} degrees"
+        end
+      RUBY
+      "point_handler" => <<~'RUBY'.chomp,
+        stylus = point_handler accepted_buttons: %i[left],
+          accepted_devices: %i[stylus touch_screen],
+          margin: 8,
+          width: 420, height: 300 do
+          card { label "Draw here" }
+        end
+
+        on stylus, :point do |event|
+          puts "At #{event.fetch("x")}, #{event.fetch("y")} pressure #{event.fetch("pressure")}"
+        end
+      RUBY
+      "multi_touch_area" => <<~'RUBY'.chomp,
+        pad = multi_touch_area minimum_touch_points: 2,
+          maximum_touch_points: 5,
+          mouse_enabled: false,
+          width: 420, height: 300 do
+          center { label "Use two to five fingers" }
+        end
+
+        on pad, :update do |event|
+          puts "Tracking #{event.fetch("points").length} points"
+        end
+      RUBY
+      "safe_area" => <<~'RUBY'.chomp,
+        # safe_area insets its content past notches, rounded corners and the
+        # home indicator on iOS and Android.
+        safe = safe_area edges: %i[top bottom], padding: 12,
+          background: "#0b0f06",
+          width: 390, height: 844 do
+          column_layout(spacing: 12) { label "Content clear of the notch" }
+        end
+
+        on safe, :change do |event|
+          puts "Top inset: #{event.fetch("top")}"
+        end
+      RUBY
       "selection_rectangle" => 'table = table_view [{ name: "Ada" }, { name: "Grace" }], columns: [{ key: :name, label: "Name" }], selection_mode: :extended\nselection_rectangle table, mode: :drag',
       "scroll_bar" => 'list = list_view (1..50).map { |index| { label: "Item \#{index}" } }, height: 280\nscroll_bar list, orientation: :vertical, policy: :always_on',
       "scroll_indicator" => 'list = list_view (1..50).map { |index| { label: "Item \#{index}" } }, height: 280\nscroll_indicator list, orientation: :vertical'
